@@ -3,9 +3,11 @@ import { Menu, Github, Brain } from 'lucide-react';
 
 interface HeaderProps {
   onMenuClick: () => void;
+  onNavigate: (module: string) => void;
+  activeModule: string;
 }
 
-export default function Header({ onMenuClick }: HeaderProps) {
+export default function Header({ onMenuClick, onNavigate, activeModule }: HeaderProps) {
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -25,14 +27,45 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </div>
         
         <nav className="hidden lg:flex items-center gap-6">
-          <a href="#" className="text-slate-600 hover:text-blue-600 transition-colors">Sorting</a>
-          <a href="#" className="text-slate-600 hover:text-blue-600 transition-colors">Searching</a>
-          <a href="#" className="text-slate-600 hover:text-blue-600 transition-colors">Data Structures</a>
-          <a href="#" className="text-slate-600 hover:text-blue-600 transition-colors">Graphs</a>
+          <button
+            type="button"
+            onClick={() => onNavigate('sorting')}
+            className={`text-slate-600 transition-colors ${activeModule === 'sorting' ? 'text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+          >
+            Sorting
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('searching')}
+            className={`text-slate-600 transition-colors ${activeModule === 'searching' ? 'text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+          >
+            Searching
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('structures')}
+            className={`text-slate-600 transition-colors ${activeModule === 'structures' ? 'text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+          >
+            Data Structures
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('graphs')}
+            className={`text-slate-600 transition-colors ${activeModule === 'graphs' ? 'text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+          >
+            Graphs
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('compression')}
+            className={`text-slate-600 transition-colors ${activeModule === 'compression' ? 'text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+          >
+            Compression
+          </button>
         </nav>
         
         <a
-          href="https://github.com"
+          href="https://github.com/hephzaron"
           target="_blank"
           rel="noopener noreferrer"
           className="p-2 hover:bg-slate-100 rounded-lg transition-colors"

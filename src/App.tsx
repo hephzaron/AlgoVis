@@ -5,6 +5,7 @@ import SortingVisualizer from './components/Visualizers/SortingVisualizer';
 import StackVisualizer from './components/Visualizers/StackVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
+import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
 import { SortingAlgorithm } from './types';
 
 function App() {
@@ -27,6 +28,8 @@ function App() {
           default:
             return <div className="card text-center py-20">Coming soon...</div>;
         }
+      case 'compression':
+        return <HuffmanVisualizer />;
       default:
         return (
           <div className="card text-center py-20">
@@ -39,7 +42,11 @@ function App() {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <Header onMenuClick={() => setSidebarOpen(true)} />
+      <Header
+        onMenuClick={() => setSidebarOpen(true)}
+        onNavigate={(module) => setActiveModule(module)}
+        activeModule={activeModule}
+      />
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
