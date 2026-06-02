@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, Eye } from 'lucide-react';
 
@@ -40,6 +40,7 @@ export default function StackVisualizer() {
   const [inputValue, setInputValue] = useState('');
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   
   const updateDisplay = useCallback(() => {
     setItems(stack.getItems());
@@ -47,7 +48,10 @@ export default function StackVisualizer() {
   
   const handlePush = () => {
     const value = parseInt(inputValue);
-    if (isNaN(value)) return;
+    if (isNaN(value)) {
+      inputRef.current?.focus();
+      return;
+    }
     
     stack.push(value);
     const newItems = stack.getItems();
@@ -56,6 +60,7 @@ export default function StackVisualizer() {
     setHighlightIndex(newItems.length - 1);
     setTimeout(() => setHighlightIndex(null), 1000);
     setInputValue('');
+    inputRef.current?.focus();
   };
   
   const handlePop = () => {
@@ -141,6 +146,7 @@ export default function StackVisualizer() {
       {/* Controls */}
       <div className="flex flex-wrap gap-3 mb-4">
         <input
+          ref={inputRef}
           type="number"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
