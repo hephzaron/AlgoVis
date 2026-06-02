@@ -1,22 +1,45 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import SortingVisualizer from './components/Visualizers/SortingVisualizer';
+import SearchingVisualizer from './components/Visualizers/SearchingVisualizer';
 import StackVisualizer from './components/Visualizers/StackVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
-import { SortingAlgorithm } from './types';
+import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeModule, setActiveModule] = useState('sorting');
-  const [activeAlgorithm, setActiveAlgorithm] = useState<SortingAlgorithm | string>('quick');
+  const [activeAlgorithm, setActiveAlgorithm] = useState<SortingAlgorithm | SearchingAlgorithm | string>('quick');
+
+  const handleModuleChange = (module: string) => {
+    setActiveModule(module);
+    switch (module) {
+      case 'sorting':
+        setActiveAlgorithm('quick');
+        break;
+      case 'searching':
+        setActiveAlgorithm('linear');
+        break;
+      case 'structures':
+        setActiveAlgorithm('stack');
+        break;
+      case 'compression':
+        setActiveAlgorithm('huffman');
+        break;
+      default:
+        setActiveAlgorithm('quick');
+    }
+  };
   
   const renderVisualizer = () => {
     switch (activeModule) {
       case 'sorting':
         return <SortingVisualizer algorithm={activeAlgorithm as SortingAlgorithm} />;
+      case 'searching':
+        return <SearchingVisualizer algorithm={activeAlgorithm as SearchingAlgorithm} />;
       case 'structures':
         switch (activeAlgorithm) {
           case 'stack':
@@ -44,7 +67,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <Header
         onMenuClick={() => setSidebarOpen(true)}
-        onNavigate={(module) => setActiveModule(module)}
+        onNavigate={handleModuleChange}
         activeModule={activeModule}
       />
       
@@ -54,7 +77,7 @@ function App() {
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             activeModule={activeModule}
-            onModuleChange={setActiveModule}
+            onModuleChange={handleModuleChange}
             activeAlgorithm={activeAlgorithm}
             onAlgorithmChange={(algo) => setActiveAlgorithm(algo)}
           />
