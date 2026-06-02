@@ -7,6 +7,8 @@ export type AlgorithmStep = {
   swapping?: number[];
   pivot?: number;
   sorted?: number[];
+  activeLines?: number[];
+  codeContext?: 'loop' | 'compare' | 'swap' | 'search' | 'partition' | 'recursive';
 };
 
 /**

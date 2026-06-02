@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { linearSearchSteps, binarySearchSteps } from '../../algorithms/searching';
 import { AlgorithmStep, SearchingAlgorithm } from '../../types';
+import { searchingAlgorithmCode } from '../../data/algorithmCode';
+import { generateRandomArray as createRandomArray } from '../../utils/helpers';
 import Controls from '../UI/Controls';
 import SearchStatsPanel from '../UI/SearchStatsPanel';
 import CodePanel from '../UI/CodePanel';
@@ -9,26 +11,6 @@ import CodePanel from '../UI/CodePanel';
 interface SearchingVisualizerProps {
   algorithm: SearchingAlgorithm;
 }
-
-const algorithmCode: Record<SearchingAlgorithm, string> = {
-  linear: `function linearSearch(arr, target):
-    for i in range(0, length(arr)):
-        if arr[i] == target:
-            return i
-    return -1`,
-  binary: `function binarySearch(arr, target):
-    left = 0
-    right = length(arr) - 1
-    while left <= right:
-        mid = floor((left + right) / 2)
-        if arr[mid] == target:
-            return mid
-        else if arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return -1`
-};
 
 const algorithmSteps: Record<SearchingAlgorithm, (arr: number[], target: number) => Generator<AlgorithmStep>> = {
   linear: linearSearchSteps,
@@ -49,9 +31,8 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
   const isTargetValid = !Number.isNaN(parsedTarget);
 
   const generateRandomArray = useCallback(() => {
-    const size = 20;
-    const newArray = Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
-    const randomTarget = newArray[Math.floor(Math.random() * size)];
+    const newArray = createRandomArray(20, 100);
+    const randomTarget = newArray[Math.floor(Math.random() * newArray.length)];
 
     setArray(newArray);
     setTargetValue(String(randomTarget));
@@ -71,7 +52,7 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
       return;
     }
 
-    const searchFn = algorithmSteps[algorithm as SearchingAlgorithm];
+    const searchFn = algorithmSteps[algorithm];
     if (typeof searchFn !== 'function') {
       setSteps([]);
       setResult('Invalid search algorithm');
@@ -131,12 +112,15 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
   const currentArray = steps[currentStep]?.array || array;
   const comparing = steps[currentStep]?.comparing || [];
   const sorted = steps[currentStep]?.sorted || [];
+  const activeLines = steps[currentStep]?.activeLines || [];
+  const codeContext = steps[currentStep]?.codeContext;
 
   const maxValue = Math.max(...currentArray, 100);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 card">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 card">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold">Searching Visualization</h2>
@@ -193,7 +177,6 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
           progress={steps.length > 1 ? currentStep / (steps.length - 1) : 0}
         />
       </div>
-
       <div className="space-y-6">
         <SearchStatsPanel
           algorithm={algorithm}
@@ -205,12 +188,15 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
           target={parsedTarget}
           result={result}
         />
-
-        <CodePanel
-          title={`${algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Search`}
-          code={algorithmCode[algorithm]}
-        />
       </div>
+    </div>
+      <CodePanel
+        title={`${algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Search`}
+        code={searchingAlgorithmCode[algorithm]}
+        activeLines={activeLines}
+        codeContext={codeContext}
+      />
     </div>
   );
 }
+
