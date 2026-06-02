@@ -3,9 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Search, RotateCcw } from 'lucide-react';
 import { BSTNode } from '../../types';
 
+/**
+ * Simple binary search tree implementation for visualization.
+ * Supports insert, delete, search, and exposes the tree root.
+ */
 class BinarySearchTree {
   root: BSTNode | null = null;
   
+  /**
+   * Inserts a new value into the BST.
+   * @param value The value to insert.
+   * @returns The created node or null for duplicates.
+   */
   insert(value: number): BSTNode | null {
     const newNode: BSTNode = { value, left: null, right: null, x: 0, y: 0 };
     
@@ -34,6 +43,11 @@ class BinarySearchTree {
     }
   }
   
+  /**
+   * Deletes a value from the BST if present.
+   * @param value The value to delete.
+   * @returns True when deletion occurred.
+   */
   delete(value: number): boolean {
     const deleteNode = (node: BSTNode | null, val: number): BSTNode | null => {
       if (!node) return null;
@@ -62,6 +76,11 @@ class BinarySearchTree {
     return newRoot !== null;
   }
   
+  /**
+   * Searches the BST for the given value.
+   * @param value The value to search for.
+   * @returns The found node or null.
+   */
   search(value: number): BSTNode | null {
     let current = this.root;
     while (current) {
@@ -72,6 +91,9 @@ class BinarySearchTree {
     return null;
   }
   
+  /**
+   * Returns the current BST root node.
+   */
   getTree(): BSTNode | null {
     return this.root;
   }
@@ -84,6 +106,9 @@ export default function BSTVisualizer() {
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
   
+  /**
+   * Recomputes the SVG layout positions for the current tree.
+   */
   const updateTree = useCallback(() => {
     const treeData = bst.getTree();
     if (treeData) {
@@ -101,6 +126,9 @@ export default function BSTVisualizer() {
     setTree(treeData);
   }, [bst]);
   
+  /**
+   * Handles insertion of the current input value into the BST.
+   */
   const handleInsert = () => {
     const value = parseInt(inputValue);
     if (isNaN(value)) return;
@@ -115,6 +143,9 @@ export default function BSTVisualizer() {
     setSearchResult(null);
   };
   
+  /**
+   * Handles deletion for the current input value from the BST.
+   */
   const handleDelete = () => {
     const value = parseInt(inputValue);
     if (isNaN(value)) return;
@@ -125,6 +156,9 @@ export default function BSTVisualizer() {
     setSearchResult(null);
   };
   
+  /**
+   * Handles searching the BST for the current input value.
+   */
   const handleSearch = () => {
     const value = parseInt(inputValue);
     if (isNaN(value)) return;

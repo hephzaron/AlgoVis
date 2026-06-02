@@ -1,5 +1,13 @@
+/**
+ * Searching algorithm implementations that return visualization steps.
+ */
 import { AlgorithmStep } from '../../types';
 
+/**
+ * Yields visualization steps for a linear search over the array.
+ * @param arr The search array.
+ * @param target The value to locate.
+ */
 export function* linearSearchSteps(arr: number[], target: number): Generator<AlgorithmStep> {
   const array = [...arr];
   
@@ -15,6 +23,11 @@ export function* linearSearchSteps(arr: number[], target: number): Generator<Alg
   yield { array: [...array] };
 }
 
+/**
+ * Yields visualization steps for a binary search on a sorted array.
+ * @param arr The input array.
+ * @param target The value to locate.
+ */
 export function* binarySearchSteps(arr: number[], target: number): Generator<AlgorithmStep> {
   const array = [...arr].sort((a, b) => a - b);
   let left = 0;

@@ -1,3 +1,6 @@
+/**
+ * Props for the search visualization statistics panel.
+ */
 import React from 'react';
 import { BarChart3, Clock, List, Search as SearchIcon, CheckCircle2, AlertTriangle } from 'lucide-react';
 
@@ -12,6 +15,9 @@ interface SearchStatsPanelProps {
   result: string;
 }
 
+/**
+ * Displays runtime metrics and result details for searching visualizations.
+ */
 export default function SearchStatsPanel({
   algorithm,
   comparisons,

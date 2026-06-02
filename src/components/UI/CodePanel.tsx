@@ -1,3 +1,6 @@
+/**
+ * Props for a collapsible code display panel.
+ */
 import React, { useState } from 'react';
 import { Code2, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -6,6 +9,9 @@ interface CodePanelProps {
   code: string;
 }
 
+/**
+ * Shows an expand/collapse panel containing source code text.
+ */
 export default function CodePanel({ title, code }: CodePanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   

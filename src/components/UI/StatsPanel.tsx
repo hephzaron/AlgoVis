@@ -1,3 +1,6 @@
+/**
+ * Props for the sorting visualization statistics panel.
+ */
 import React from 'react';
 import { BarChart3, GitCompare, Shuffle, Clock, List, Layers } from 'lucide-react';
 
@@ -11,6 +14,9 @@ interface StatsPanelProps {
   totalSteps: number;
 }
 
+/**
+ * Displays complexity and step metrics for sorting visualizations.
+ */
 export default function StatsPanel({
   algorithm,
   comparisons,

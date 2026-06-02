@@ -1,3 +1,8 @@
+/**
+ * Custom hook that runs a callback on a fixed interval.
+ * @param callback The function to invoke repeatedly.
+ * @param delay The interval delay in milliseconds.
+ */
 import { useEffect, useRef } from 'react';
 
 export default function useAnimation(callback: () => void, delay: number) {

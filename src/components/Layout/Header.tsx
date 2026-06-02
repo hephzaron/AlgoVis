@@ -1,3 +1,6 @@
+/**
+ * Header bar containing logo, navigation buttons, and external links.
+ */
 import React from 'react';
 import { Menu, Github, Brain } from 'lucide-react';
 

@@ -1,3 +1,7 @@
+/**
+ * A simple Huffman encoder/decoder for compression visualization.
+ * Stores the tree and the generated bit codes for each character.
+ */
 import { HuffmanNode } from '../../types';
 
 export class HuffmanCoder {
@@ -5,7 +9,10 @@ export class HuffmanCoder {
   private codes: Map<string, string> = new Map();
   private root: HuffmanNode | null = null;
   
-  // Build Huffman tree from input text
+  /**
+   * Builds the Huffman tree for the input text.
+   * @param text The input string to encode.
+   */
   buildTree(text: string): HuffmanNode | null {
     // Calculate frequencies
     this.frequencies.clear();
@@ -44,7 +51,11 @@ export class HuffmanCoder {
     return this.root;
   }
   
-  // Generate binary codes for each character
+  /**
+   * Traverses the tree to generate binary codes for every character.
+   * @param node The current tree node.
+   * @param code The code prefix accumulated so far.
+   */
   private generateCodes(node: HuffmanNode | null, code: string): void {
     if (!node) return;
     
@@ -56,7 +67,11 @@ export class HuffmanCoder {
     this.generateCodes(node.right, code + '1');
   }
   
-  // Encode text to binary string
+  /**
+   * Encodes the given text using the generated Huffman codes.
+   * @param text The plaintext to encode.
+   * @returns The encoded binary string.
+   */
   encode(text: string): string {
     let result = '';
     for (const char of text) {
@@ -65,7 +80,11 @@ export class HuffmanCoder {
     return result;
   }
   
-  // Decode binary string to text
+  /**
+   * Decodes a Huffman-encoded binary string back to text.
+   * @param binary The encoded binary string.
+   * @returns The decoded plaintext.
+   */
   decode(binary: string): string {
     let result = '';
     let current = this.root;

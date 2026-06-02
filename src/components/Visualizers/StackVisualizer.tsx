@@ -2,38 +2,68 @@ import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, Eye } from 'lucide-react';
 
+/**
+ * Simple stack implementation used by the stack visualizer.
+ * Supports push/pop/peek semantics and exposes the current item list.
+ */
 class Stack {
   private items: number[] = [];
   
+  /**
+   * Pushes a new value onto the stack.
+   * @param item The value to push.
+   */
   push(item: number): void {
     this.items.push(item);
   }
   
+  /**
+   * Removes and returns the top value from the stack.
+   */
   pop(): number | undefined {
     return this.items.pop();
   }
   
+  /**
+   * Retrieves the top value without removing it.
+   */
   peek(): number | undefined {
     return this.items[this.items.length - 1];
   }
   
+  /**
+   * Checks whether the stack is empty.
+   */
   isEmpty(): boolean {
     return this.items.length === 0;
   }
   
+  /**
+   * Returns the current number of items in the stack.
+   */
   size(): number {
     return this.items.length;
   }
   
+  /**
+   * Returns a shallow copy of the stack contents.
+   */
   getItems(): number[] {
     return [...this.items];
   }
   
+  /**
+   * Empties the stack.
+   */
   clear(): void {
     this.items = [];
   }
 }
 
+/**
+ * Visual component for interacting with and animating a stack.
+ * Users can push, pop, peek, and clear the stack while watching the UI update.
+ */
 export default function StackVisualizer() {
   const [stack] = useState(() => new Stack());
   const [items, setItems] = useState<number[]>([]);

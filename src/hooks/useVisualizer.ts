@@ -1,3 +1,7 @@
+/**
+ * Custom hook to manage visualizer state for data-driven components.
+ * Keeps track of the current data array, active highlights, and completion.
+ */
 import { useState } from 'react';
 import type { VisualizerState } from '../types';
 

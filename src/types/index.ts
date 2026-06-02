@@ -1,4 +1,6 @@
-// Algorithm step types
+/**
+ * Represents a single step in a sorting or searching visualization.
+ */
 export type AlgorithmStep = {
   array: number[];
   comparing?: number[];
@@ -7,25 +9,39 @@ export type AlgorithmStep = {
   sorted?: number[];
 };
 
-// Sorting algorithms
+/**
+ * Available sorting algorithm identifiers.
+ */
 export type SortingAlgorithm = 'merge' | 'quick' | 'insertion' | 'bubble' | 'selection' | 'heap';
 
-// Searching algorithms
+/**
+ * Available searching algorithm identifiers.
+ */
 export type SearchingAlgorithm = 'linear' | 'binary';
 
-// Data structures
+/**
+ * Supported data structure visualizer names.
+ */
 export type DataStructure = 'stack' | 'queue' | 'bst' | 'hash';
 
-// Graph algorithms
+/**
+ * Supported graph algorithm visualizer names.
+ */
 export type GraphAlgorithm = 'dijkstra';
 
-// Compression algorithms
+/**
+ * Supported compression algorithm identifiers.
+ */
 export type CompressionAlgorithm = 'huffman';
 
-// Animation state
+/**
+ * Animation lifecycle states used across visualizers.
+ */
 export type AnimationState = 'idle' | 'running' | 'paused' | 'completed';
 
-// Node for BST
+/**
+ * A node in the binary search tree used for visualization.
+ */
 export interface BSTNode {
   value: number;
   left: BSTNode | null;
@@ -34,7 +50,9 @@ export interface BSTNode {
   y: number;
 }
 
-// Graph node for Dijkstra
+/**
+ * Graph node metadata used in graph visualizations.
+ */
 export interface GraphNode {
   id: string;
   label: string;
@@ -42,13 +60,18 @@ export interface GraphNode {
   y: number;
 }
 
+/**
+ * Represents a weighted edge in a graph visualization.
+ */
 export interface GraphEdge {
   from: string;
   to: string;
   weight: number;
 }
 
-// Huffman tree node
+/**
+ * Node type used for Huffman tree construction.
+ */
 export interface HuffmanNode {
   char: string | null;
   freq: number;
@@ -56,7 +79,9 @@ export interface HuffmanNode {
   right: HuffmanNode | null;
 }
 
-// Hash table bucket
+/**
+ * Represents a single bucket entry in a hash table.
+ */
 export interface HashBucket {
   key: string;
   value: number;

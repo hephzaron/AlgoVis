@@ -1,3 +1,6 @@
+/**
+ * Collapsible sidebar menu for module and algorithm selection.
+ */
 import React from 'react';
 import { X, ChevronRight, ArrowRightLeft, Search, Database, GitBranch, Hash, Network, FileCode } from 'lucide-react';
 import { SortingAlgorithm } from '../../types';

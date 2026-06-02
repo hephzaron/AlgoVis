@@ -1,10 +1,21 @@
+/**
+ * Sorting algorithms that yield visualization steps for the stack-based visualizer.
+ * Each generator returns a sequence of AlgorithmStep objects describing comparisons,
+ * swaps, and final sorting progress.
+ */
 import { AlgorithmStep } from '../../types';
 
-// Merge Sort Implementation with visualization steps
+/**
+ * Generates visualization steps for merge sort.
+ * @param arr The input array to sort.
+ */
 export function* mergeSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];
   const n = array.length;
   
+  /**
+   * Merges two sorted subarrays and yields animation steps.
+   */
   function* merge(l: number, m: number, r: number): Generator<AlgorithmStep> {
     const left = array.slice(l, m + 1);
     const right = array.slice(m + 1, r + 1);
@@ -47,6 +58,9 @@ export function* mergeSortSteps(arr: number[]): Generator<AlgorithmStep> {
     }
   }
   
+  /**
+   * Recursively sorts the array and yields merge steps.
+   */
   function* sort(l: number, r: number): Generator<AlgorithmStep> {
     if (l < r) {
       const m = Math.floor((l + r) / 2);
@@ -60,10 +74,17 @@ export function* mergeSortSteps(arr: number[]): Generator<AlgorithmStep> {
   yield { array: [...array], sorted: Array.from({ length: n }, (_, i) => i) };
 }
 
+/**
+ * Generates visualization steps for quick sort.
+ * @param arr The array to sort.
+ */
 // Quick Sort Implementation
 export function* quickSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];
   
+  /**
+   * Partitions the current array segment around a pivot element.
+   */
   function* partition(low: number, high: number): Generator<number> {
     const pivot = array[high];
     let i = low - 1;
@@ -83,6 +104,9 @@ export function* quickSortSteps(arr: number[]): Generator<AlgorithmStep> {
     return i + 1;
   }
   
+  /**
+   * Recursively sorts the array segments around the pivot.
+   */
   function* sort(low: number, high: number): Generator<AlgorithmStep> {
     if (low < high) {
       const pi = yield* partition(low, high);
@@ -95,6 +119,10 @@ export function* quickSortSteps(arr: number[]): Generator<AlgorithmStep> {
   yield { array: [...array], sorted: Array.from({ length: array.length }, (_, i) => i) };
 }
 
+/**
+ * Generates visualization steps for insertion sort.
+ * @param arr The array to sort.
+ */
 // Insertion Sort
 export function* insertionSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];
@@ -117,6 +145,10 @@ export function* insertionSortSteps(arr: number[]): Generator<AlgorithmStep> {
   yield { array: [...array], sorted: Array.from({ length: n }, (_, i) => i) };
 }
 
+/**
+ * Generates visualization steps for bubble sort.
+ * @param arr The array to sort.
+ */
 // Bubble Sort
 export function* bubbleSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];
@@ -137,6 +169,10 @@ export function* bubbleSortSteps(arr: number[]): Generator<AlgorithmStep> {
   yield { array: [...array], sorted: Array.from({ length: n }, (_, i) => i) };
 }
 
+/**
+ * Generates visualization steps for selection sort.
+ * @param arr The array to sort.
+ */
 // Selection Sort
 export function* selectionSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];
@@ -162,6 +198,10 @@ export function* selectionSortSteps(arr: number[]): Generator<AlgorithmStep> {
   yield { array: [...array], sorted: Array.from({ length: n }, (_, i) => i) };
 }
 
+/**
+ * Generates visualization steps for heap sort.
+ * @param arr The array to sort.
+ */
 // Heap Sort
 export function* heapSortSteps(arr: number[]): Generator<AlgorithmStep> {
   const array = [...arr];

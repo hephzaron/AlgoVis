@@ -1,3 +1,6 @@
+/**
+ * Controls props used by multiple visualizer playback components.
+ */
 import React from 'react';
 import { Play, Pause, RotateCcw, StepForward, Zap } from 'lucide-react';
 
@@ -12,6 +15,9 @@ interface ControlsProps {
   progress: number;
 }
 
+/**
+ * Playback and progress controls for algorithm visualizers.
+ */
 export default function Controls({
   isPlaying,
   onPlay,

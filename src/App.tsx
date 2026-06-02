@@ -1,3 +1,8 @@
+/**
+ * Main application component for Algo-Vis.
+ * Manages the current selected module, the active algorithm,
+ * and renders the matching visualizer screen.
+ */
 import { useState } from 'react';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
@@ -14,6 +19,10 @@ function App() {
   const [activeModule, setActiveModule] = useState('sorting');
   const [activeAlgorithm, setActiveAlgorithm] = useState<SortingAlgorithm | SearchingAlgorithm | string>('quick');
 
+  /**
+   * Switches the current top-level module and resets
+   * the active algorithm to a default for that module.
+   */
   const handleModuleChange = (module: string) => {
     setActiveModule(module);
     switch (module) {
@@ -34,6 +43,9 @@ function App() {
     }
   };
   
+  /**
+   * Renders the visualizer that corresponds to the selected module.
+   */
   const renderVisualizer = () => {
     switch (activeModule) {
       case 'sorting':
