@@ -1,0 +1,183 @@
+import React, { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Minus, RotateCcw, Eye } from 'lucide-react';
+
+class Stack {
+  private items: number[] = [];
+  
+  push(item: number): void {
+    this.items.push(item);
+  }
+  
+  pop(): number | undefined {
+    return this.items.pop();
+  }
+  
+  peek(): number | undefined {
+    return this.items[this.items.length - 1];
+  }
+  
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+  
+  size(): number {
+    return this.items.length;
+  }
+  
+  getItems(): number[] {
+    return [...this.items];
+  }
+  
+  clear(): void {
+    this.items = [];
+  }
+}
+
+export default function StackVisualizer() {
+  const [stack] = useState(() => new Stack());
+  const [items, setItems] = useState<number[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [lastAction, setLastAction] = useState<string | null>(null);
+  const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+  
+  const updateDisplay = useCallback(() => {
+    setItems(stack.getItems());
+  }, [stack]);
+  
+  const handlePush = () => {
+    const value = parseInt(inputValue);
+    if (isNaN(value)) return;
+    
+    stack.push(value);
+    updateDisplay();
+    setLastAction(`Pushed: ${value}`);
+    setHighlightIndex(items.length);
+    setTimeout(() => setHighlightIndex(null), 1000);
+    setInputValue('');
+  };
+  
+  const handlePop = () => {
+    const popped = stack.pop();
+    if (popped !== undefined) {
+      updateDisplay();
+      setLastAction(`Popped: ${popped}`);
+      setHighlightIndex(items.length - 1);
+      setTimeout(() => setHighlightIndex(null), 1000);
+    } else {
+      setLastAction('Stack is empty!');
+      setTimeout(() => setLastAction(null), 1500);
+    }
+  };
+  
+  const handlePeek = () => {
+    const top = stack.peek();
+    if (top !== undefined) {
+      setLastAction(`Top element: ${top}`);
+      setHighlightIndex(items.length - 1);
+      setTimeout(() => setHighlightIndex(null), 1000);
+    } else {
+      setLastAction('Stack is empty!');
+      setTimeout(() => setLastAction(null), 1500);
+    }
+  };
+  
+  const handleClear = () => {
+    stack.clear();
+    updateDisplay();
+    setLastAction('Stack cleared');
+    setTimeout(() => setLastAction(null), 1000);
+  };
+  
+  return (
+    <div className="card">
+      <h2 className="text-2xl font-bold mb-4">Stack (LIFO)</h2>
+      
+      {/* Stack Visualization */}
+      <div className="mb-6 p-6 bg-slate-100 rounded-xl min-h-[300px] flex flex-col-reverse items-center gap-2">
+        <AnimatePresence>
+          {items.length === 0 ? (
+            <div className="w-full text-center text-slate-400 py-8">
+              Stack is empty. Push items to see them here.
+            </div>
+          ) : (
+            items.slice().reverse().map((item, idx) => {
+              const originalIdx = items.length - 1 - idx;
+              return (
+                <motion.div
+                  key={`${originalIdx}-${item}`}
+                  initial={{ scale: 0, opacity: 0, y: -50 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0, opacity: 0, y: 50 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="w-full"
+                >
+                  <div
+                    className={`
+                      w-full max-w-md mx-auto py-4 rounded-xl flex items-center justify-center text-2xl font-bold
+                      transition-all duration-300
+                      ${highlightIndex === originalIdx ? 'ring-4 ring-yellow-500 scale-105' : ''}
+                      ${originalIdx === items.length - 1 ? 'bg-purple-500' : 'bg-blue-500'}
+                      text-white shadow-lg
+                    `}
+                  >
+                    {item}
+                  </div>
+                </motion.div>
+              );
+            })
+          )}
+        </AnimatePresence>
+      </div>
+      
+      {/* Top indicator */}
+      {items.length > 0 && (
+        <div className="text-center text-sm text-purple-600 font-semibold mb-4">
+          ↑ TOP ↑
+        </div>
+      )}
+      
+      {/* Controls */}
+      <div className="flex flex-wrap gap-3 mb-4">
+        <input
+          type="number"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handlePush()}
+          placeholder="Enter value"
+          className="flex-1 min-w-[150px] px-4 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button onClick={handlePush} className="btn-primary flex items-center gap-2">
+          <Plus size={18} /> Push
+        </button>
+        <button onClick={handlePop} className="btn-secondary flex items-center gap-2">
+          <Minus size={18} /> Pop
+        </button>
+        <button onClick={handlePeek} className="btn-secondary flex items-center gap-2">
+          <Eye size={18} /> Peek
+        </button>
+        <button onClick={handleClear} className="btn-secondary flex items-center gap-2">
+          <RotateCcw size={18} /> Clear
+        </button>
+      </div>
+      
+      {/* Action feedback */}
+      {lastAction && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="mt-4 p-3 bg-blue-50 rounded-xl text-blue-700 text-center font-medium"
+        >
+          {lastAction}
+        </motion.div>
+      )}
+      
+      {/* Stack Info */}
+      <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between text-sm text-slate-500">
+        <span>Stack Size: {items.length}</span>
+        <span>LIFO (Last In, First Out)</span>
+      </div>
+    </div>
+  );
+}
