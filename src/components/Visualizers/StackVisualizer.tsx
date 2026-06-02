@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, Eye } from 'lucide-react';
 
@@ -50,9 +50,10 @@ export default function StackVisualizer() {
     if (isNaN(value)) return;
     
     stack.push(value);
-    updateDisplay();
+    const newItems = stack.getItems();
+    setItems(newItems);
     setLastAction(`Pushed: ${value}`);
-    setHighlightIndex(items.length);
+    setHighlightIndex(newItems.length - 1);
     setTimeout(() => setHighlightIndex(null), 1000);
     setInputValue('');
   };
@@ -60,9 +61,10 @@ export default function StackVisualizer() {
   const handlePop = () => {
     const popped = stack.pop();
     if (popped !== undefined) {
-      updateDisplay();
+      const newItems = stack.getItems();
+      setItems(newItems);
       setLastAction(`Popped: ${popped}`);
-      setHighlightIndex(items.length - 1);
+      setHighlightIndex(newItems.length - 1);
       setTimeout(() => setHighlightIndex(null), 1000);
     } else {
       setLastAction('Stack is empty!');
@@ -93,6 +95,13 @@ export default function StackVisualizer() {
     <div className="card">
       <h2 className="text-2xl font-bold mb-4">Stack (LIFO)</h2>
       
+      {/* Top indicator */}
+      {items.length > 0 && (
+        <div className="text-center text-sm text-purple-600 font-semibold mb-4">
+          ↑ TOP ↑
+        </div>
+      )}
+
       {/* Stack Visualization */}
       <div className="mb-6 p-6 bg-slate-100 rounded-xl min-h-[300px] flex flex-col-reverse items-center gap-2">
         <AnimatePresence>
@@ -101,11 +110,10 @@ export default function StackVisualizer() {
               Stack is empty. Push items to see them here.
             </div>
           ) : (
-            items.slice().reverse().map((item, idx) => {
-              const originalIdx = items.length - 1 - idx;
+            items.map((item, idx) => {
               return (
                 <motion.div
-                  key={`${originalIdx}-${item}`}
+                  key={`${idx}-${item}`}
                   initial={{ scale: 0, opacity: 0, y: -50 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0, opacity: 0, y: 50 }}
@@ -116,8 +124,8 @@ export default function StackVisualizer() {
                     className={`
                       w-full max-w-md mx-auto py-4 rounded-xl flex items-center justify-center text-2xl font-bold
                       transition-all duration-300
-                      ${highlightIndex === originalIdx ? 'ring-4 ring-yellow-500 scale-105' : ''}
-                      ${originalIdx === items.length - 1 ? 'bg-purple-500' : 'bg-blue-500'}
+                      ${highlightIndex === idx ? 'ring-4 ring-yellow-500 scale-105' : ''}
+                      ${idx === items.length - 1 ? 'bg-purple-500' : 'bg-blue-500'}
                       text-white shadow-lg
                     `}
                   >
@@ -129,13 +137,6 @@ export default function StackVisualizer() {
           )}
         </AnimatePresence>
       </div>
-      
-      {/* Top indicator */}
-      {items.length > 0 && (
-        <div className="text-center text-sm text-purple-600 font-semibold mb-4">
-          ↑ TOP ↑
-        </div>
-      )}
       
       {/* Controls */}
       <div className="flex flex-wrap gap-3 mb-4">
