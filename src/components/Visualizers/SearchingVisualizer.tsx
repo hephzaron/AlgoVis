@@ -145,12 +145,14 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
                   initial={{ height: 0 }}
                   animate={{ height: `${(value / maxValue) * 100}%` }}
                   transition={{ duration: 0.3 }}
-                  className={`w-8 rounded-t-lg transition-all duration-200 ${
+                  className={`relative w-8 rounded-t-lg transition-all duration-200 ${
                     sorted.includes(idx) ? 'bg-green-500' : comparing.includes(idx) ? 'bg-yellow-500' : 'bg-primary-500'
                   }`}
                   style={{ height: `${(value / maxValue) * 100}%` }}
                 >
-                  <div className="text-center text-xs text-white -mt-6">{value}</div>
+                  <div className="absolute inset-x-0 top-1 text-center text-xs font-semibold text-white">
+                    {value}
+                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
