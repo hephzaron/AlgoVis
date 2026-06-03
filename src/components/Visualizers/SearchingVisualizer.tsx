@@ -34,7 +34,7 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
   const isTargetValid = !Number.isNaN(parsedTarget);
 
   const generateRandomArray = useCallback(() => {
-    const newArray = createRandomArray(20, 100);
+    const newArray = createRandomArray(20, 99);
     const randomTarget = newArray[Math.floor(Math.random() * newArray.length)];
 
     setArray(newArray);
@@ -108,7 +108,7 @@ export default function SearchingVisualizer({ algorithm }: SearchingVisualizerPr
   const activeLines = steps[currentStep]?.activeLines || [];
   const codeContext = steps[currentStep]?.codeContext;
 
-  const maxValue = Math.max(...currentArray, 100);
+  const maxValue = Math.max(...currentArray, 99);
 
   return (
     <div className="space-y-6 min-w-0">

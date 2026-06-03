@@ -4,7 +4,7 @@
  * @param maxValue The maximum value for each element.
  * @returns A new array of random integers.
  */
-export function generateRandomArray(length: number, maxValue = 100) {
+export function generateRandomArray(length: number, maxValue = 99) {
   return Array.from({ length }, () => Math.floor(Math.random() * maxValue) + 1);
 }
 

@@ -37,7 +37,7 @@ export default function SortingVisualizer({ algorithm }: SortingVisualizerProps)
   const [stats, setStats] = useState({ comparisons: 0, swaps: 0, timeMs: 0 });
   
   const generateRandomArray = useCallback(() => {
-    const newArray = createRandomArray(30, 100);
+    const newArray = createRandomArray(30, 99);
     setArray(newArray);
     
     const generator = algorithmSteps[algorithm](newArray);
@@ -84,7 +84,7 @@ export default function SortingVisualizer({ algorithm }: SortingVisualizerProps)
   const activeLines = steps[currentStep]?.activeLines || [];
   const codeContext = steps[currentStep]?.codeContext;
   
-  const maxValue = Math.max(...currentArray, 100);
+  const maxValue = Math.max(...currentArray, 99);
   
   return (
     <div className="space-y-6 min-w-0">
