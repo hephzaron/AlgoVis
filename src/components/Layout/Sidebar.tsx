@@ -1,9 +1,7 @@
 /**
  * Collapsible sidebar menu for module and algorithm selection.
  */
-import React from 'react';
-import { X, ChevronRight, ArrowRightLeft, Search, Database, GitBranch, Hash, Network, FileCode } from 'lucide-react';
-import { SortingAlgorithm } from '../../types';
+import { X, ChevronRight, ArrowRightLeft, Search, Database, Network, FileCode } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -79,15 +77,15 @@ export default function Sidebar({
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={onClose}
         />
       )}
       
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300
-        lg:translate-x-0 lg:relative lg:shadow-none
+        fixed top-16 left-0 h-[calc(100%-4rem)] w-80 bg-white shadow-2xl z-40 transform transition-transform duration-300
+        lg:top-0 lg:h-full lg:translate-x-0 lg:relative lg:shadow-none
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="p-4 border-b border-slate-200 flex items-center justify-between lg:hidden">
