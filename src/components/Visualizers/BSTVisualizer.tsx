@@ -102,13 +102,21 @@ class BinarySearchTree {
 }
 
 /**
- * Helper to find the line range for a function in the BST code.
+ * Helper to find the line numbers for a function in the BST code.
  */
-function getFunctionLines(fnName: string): number[] {
-  const lines = dataStructureCode.bst.split('\n');
-  const start = lines.findIndex((line) => line.includes(`def ${fnName}(`));
-  if (start === -1) return [];
-  return [start + 1, Math.min(start + 8, lines.length)];
+function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
+  const lines = code.split('\n');
+  const result: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`def ${fnName}(`)) {
+      result.push(i + 1);
+      for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
+        if (lines[i + j].trim() !== '') result.push(i + j + 1);
+      }
+      break;
+    }
+  }
+  return result;
 }
 
 export default function BSTVisualizer() {
@@ -149,8 +157,7 @@ export default function BSTVisualizer() {
     const newNode = bst.insert(value);
     if (newNode) {
       setHighlightedNode(value);
-      const lines = getFunctionLines('insert');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.bst, 'insert', 8));
       setTimeout(() => {
         setHighlightedNode(null);
         setActiveLines([]);
@@ -170,8 +177,7 @@ export default function BSTVisualizer() {
     
     bst.delete(value);
     updateTree();
-    const lines = getFunctionLines('delete');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.bst, 'delete', 10));
     setTimeout(() => setActiveLines([]), 1000);
     setInputValue('');
     setSearchResult(null);
@@ -188,16 +194,14 @@ export default function BSTVisualizer() {
     if (found) {
       setSearchResult(`Found: ${value}`);
       setHighlightedNode(value);
-      const lines = getFunctionLines('contains');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.bst, 'contains', 7));
       setTimeout(() => {
         setHighlightedNode(null);
         setActiveLines([]);
       }, 1500);
     } else {
       setSearchResult(`Not found: ${value}`);
-      const lines = getFunctionLines('contains');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.bst, 'contains', 7));
       setTimeout(() => setActiveLines([]), 1500);
     }
   };

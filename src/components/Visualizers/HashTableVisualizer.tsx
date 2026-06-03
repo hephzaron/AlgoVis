@@ -63,13 +63,21 @@ class HashTable {
 }
 
 /**
- * Helper to find the line range for a function in the hash table code.
+ * Helper to find the line numbers for a function in the hash table code.
  */
-function getFunctionLines(fnName: string): number[] {
-  const lines = dataStructureCode.hash.split('\n');
-  const start = lines.findIndex((line) => line.includes(`def ${fnName}(`));
-  if (start === -1) return [];
-  return [start + 1, Math.min(start + 8, lines.length)];
+function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
+  const lines = code.split('\n');
+  const result: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`def ${fnName}(`)) {
+      result.push(i + 1);
+      for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
+        if (lines[i + j].trim() !== '') result.push(i + j + 1);
+      }
+      break;
+    }
+  }
+  return result;
 }
 
 function HashTableVisualizer() {
@@ -90,8 +98,7 @@ function HashTableVisualizer() {
     hashTable.set(keyInput, value);
     updateDisplay();
     setMessage(`Set: ${keyInput} = ${value}`);
-    const lines = getFunctionLines('set');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.hash, 'set', 8));
     setTimeout(() => {
       setMessage(null);
       setActiveLines([]);
@@ -108,8 +115,7 @@ function HashTableVisualizer() {
     } else {
       setMessage(`Not found: ${keyInput}`);
     }
-    const lines = getFunctionLines('get');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.hash, 'get', 5));
     setTimeout(() => {
       setMessage(null);
       setActiveLines([]);
@@ -121,8 +127,7 @@ function HashTableVisualizer() {
     const deleted = hashTable.delete(keyInput);
     updateDisplay();
     setMessage(deleted ? `Deleted: ${keyInput}` : `Not found: ${keyInput}`);
-    const lines = getFunctionLines('delete');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.hash, 'delete', 6));
     setTimeout(() => {
       setMessage(null);
       setActiveLines([]);

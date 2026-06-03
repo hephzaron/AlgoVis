@@ -63,13 +63,21 @@ class Queue {
 }
 
 /**
- * Helper to find the line range for a function in the queue code.
+ * Helper to find the line numbers for a function in the queue code.
  */
-function getFunctionLines(fnName: string): number[] {
-  const lines = dataStructureCode.queue.split('\n');
-  const start = lines.findIndex((line) => line.includes(`def ${fnName}(`));
-  if (start === -1) return [];
-  return [start + 1, Math.min(start + 5, lines.length)];
+function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
+  const lines = code.split('\n');
+  const result: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`def ${fnName}(`)) {
+      result.push(i + 1);
+      for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
+        if (lines[i + j].trim() !== '') result.push(i + j + 1);
+      }
+      break;
+    }
+  }
+  return result;
 }
 
 /**
@@ -96,8 +104,7 @@ export default function QueueVisualizer() {
     updateDisplay();
     setLastAction(`Enqueued: ${value}`);
     setHighlightIndex(items.length);
-    const lines = getFunctionLines('enqueue');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.queue, 'enqueue', 1));
     setTimeout(() => {
       setHighlightIndex(null);
       setActiveLines([]);
@@ -111,16 +118,14 @@ export default function QueueVisualizer() {
       updateDisplay();
       setLastAction(`Dequeued: ${dequeued}`);
       setHighlightIndex(0);
-      const lines = getFunctionLines('dequeue');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.queue, 'dequeue', 3));
       setTimeout(() => {
         setHighlightIndex(null);
         setActiveLines([]);
       }, 1000);
     } else {
       setLastAction('Queue is empty!');
-      const lines = getFunctionLines('dequeue');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.queue, 'dequeue', 3));
       setTimeout(() => {
         setLastAction(null);
         setActiveLines([]);
@@ -133,16 +138,14 @@ export default function QueueVisualizer() {
     if (front !== undefined) {
       setLastAction(`Front element: ${front}`);
       setHighlightIndex(0);
-      const lines = getFunctionLines('front');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.queue, 'front', 2));
       setTimeout(() => {
         setHighlightIndex(null);
         setActiveLines([]);
       }, 1000);
     } else {
       setLastAction('Queue is empty!');
-      const lines = getFunctionLines('front');
-      setActiveLines(lines);
+      setActiveLines(getFunctionLines(dataStructureCode.queue, 'front', 2));
       setTimeout(() => {
         setLastAction(null);
         setActiveLines([]);
@@ -154,8 +157,7 @@ export default function QueueVisualizer() {
     queue.clear();
     updateDisplay();
     setLastAction('Queue cleared');
-    const lines = getFunctionLines('__init__');
-    setActiveLines(lines);
+    setActiveLines(getFunctionLines(dataStructureCode.queue, '__init__', 1));
     setTimeout(() => {
       setLastAction(null);
       setActiveLines([]);
