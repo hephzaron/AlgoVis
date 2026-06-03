@@ -1,6 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, ArrowRight } from 'lucide-react';
+import CodePanel from '../UI/CodePanel';
+import { dataStructureCode } from '../../data/dataStructureCode';
 
 /**
  * Simple queue implementation used by the queue visualizer.
@@ -61,6 +63,16 @@ class Queue {
 }
 
 /**
+ * Helper to find the line range for a function in the queue code.
+ */
+function getFunctionLines(fnName: string): number[] {
+  const lines = dataStructureCode.queue.split('\n');
+  const start = lines.findIndex((line) => line.includes(`def ${fnName}(`));
+  if (start === -1) return [];
+  return [start + 1, Math.min(start + 5, lines.length)];
+}
+
+/**
  * Visual component for interacting with a queue.
  * Supports enqueue, dequeue, peek, and clear operations.
  */
@@ -70,6 +82,7 @@ export default function QueueVisualizer() {
   const [inputValue, setInputValue] = useState('');
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+  const [activeLines, setActiveLines] = useState<number[]>([]);
   
   const updateDisplay = useCallback(() => {
     setItems(queue.getItems());
@@ -83,7 +96,12 @@ export default function QueueVisualizer() {
     updateDisplay();
     setLastAction(`Enqueued: ${value}`);
     setHighlightIndex(items.length);
-    setTimeout(() => setHighlightIndex(null), 1000);
+    const lines = getFunctionLines('enqueue');
+    setActiveLines(lines);
+    setTimeout(() => {
+      setHighlightIndex(null);
+      setActiveLines([]);
+    }, 1000);
     setInputValue('');
   };
   
@@ -93,10 +111,20 @@ export default function QueueVisualizer() {
       updateDisplay();
       setLastAction(`Dequeued: ${dequeued}`);
       setHighlightIndex(0);
-      setTimeout(() => setHighlightIndex(null), 1000);
+      const lines = getFunctionLines('dequeue');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setHighlightIndex(null);
+        setActiveLines([]);
+      }, 1000);
     } else {
       setLastAction('Queue is empty!');
-      setTimeout(() => setLastAction(null), 1500);
+      const lines = getFunctionLines('dequeue');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setLastAction(null);
+        setActiveLines([]);
+      }, 1500);
     }
   };
   
@@ -105,10 +133,20 @@ export default function QueueVisualizer() {
     if (front !== undefined) {
       setLastAction(`Front element: ${front}`);
       setHighlightIndex(0);
-      setTimeout(() => setHighlightIndex(null), 1000);
+      const lines = getFunctionLines('front');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setHighlightIndex(null);
+        setActiveLines([]);
+      }, 1000);
     } else {
       setLastAction('Queue is empty!');
-      setTimeout(() => setLastAction(null), 1500);
+      const lines = getFunctionLines('front');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setLastAction(null);
+        setActiveLines([]);
+      }, 1500);
     }
   };
   
@@ -116,7 +154,12 @@ export default function QueueVisualizer() {
     queue.clear();
     updateDisplay();
     setLastAction('Queue cleared');
-    setTimeout(() => setLastAction(null), 1000);
+    const lines = getFunctionLines('__init__');
+    setActiveLines(lines);
+    setTimeout(() => {
+      setLastAction(null);
+      setActiveLines([]);
+    }, 1000);
   };
   
   return (
@@ -216,6 +259,11 @@ export default function QueueVisualizer() {
       <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between text-sm text-slate-500">
         <span>Queue Size: {items.length}</span>
         <span>FIFO (First In, First Out)</span>
+      </div>
+
+      {/* Code Panel */}
+      <div className="mt-6">
+        <CodePanel title="Queue" code={dataStructureCode.queue} activeLines={activeLines} />
       </div>
     </div>
   );

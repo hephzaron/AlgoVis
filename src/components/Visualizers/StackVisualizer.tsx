@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, Eye } from 'lucide-react';
+import CodePanel from '../UI/CodePanel';
+import { dataStructureCode } from '../../data/dataStructureCode';
 
 /**
  * Simple stack implementation used by the stack visualizer.
@@ -70,11 +72,27 @@ export default function StackVisualizer() {
   const [inputValue, setInputValue] = useState('');
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+  const [activeLines, setActiveLines] = useState<number[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
   const updateDisplay = useCallback(() => {
     setItems(stack.getItems());
   }, [stack]);
+
+  function getFunctionLines(code: string, fnName: string, bodyLines = 1) {
+    const lines = code.split('\n');
+    const result: number[] = [];
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes(`def ${fnName}(`)) {
+        result.push(i + 1);
+        for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
+          if (lines[i + j].trim() !== '') result.push(i + j + 1);
+        }
+        break;
+      }
+    }
+    return result;
+  }
   
   const handlePush = () => {
     const value = parseInt(inputValue);
@@ -88,7 +106,9 @@ export default function StackVisualizer() {
     setItems(newItems);
     setLastAction(`Pushed: ${value}`);
     setHighlightIndex(newItems.length - 1);
+    setActiveLines(getFunctionLines(dataStructureCode.stack, 'push', 1));
     setTimeout(() => setHighlightIndex(null), 1000);
+    setTimeout(() => setActiveLines([]), 1200);
     setInputValue('');
     inputRef.current?.focus();
   };
@@ -100,7 +120,9 @@ export default function StackVisualizer() {
       setItems(newItems);
       setLastAction(`Popped: ${popped}`);
       setHighlightIndex(newItems.length - 1);
+      setActiveLines(getFunctionLines(dataStructureCode.stack, 'pop', 2));
       setTimeout(() => setHighlightIndex(null), 1000);
+      setTimeout(() => setActiveLines([]), 1200);
     } else {
       setLastAction('Stack is empty!');
       setTimeout(() => setLastAction(null), 1500);
@@ -123,9 +145,11 @@ export default function StackVisualizer() {
     stack.clear();
     updateDisplay();
     setLastAction('Stack cleared');
-    setTimeout(() => setLastAction(null), 1000);
+      setActiveLines(getFunctionLines(dataStructureCode.stack, 'is_empty', 1));
+      setTimeout(() => setLastAction(null), 1000);
+      setTimeout(() => setActiveLines([]), 1200);
   };
-  
+
   return (
     <div className="card">
       <h2 className="text-2xl font-bold mb-4">Stack (LIFO)</h2>
@@ -214,6 +238,10 @@ export default function StackVisualizer() {
       <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between text-sm text-slate-500">
         <span>Stack Size: {items.length}</span>
         <span>LIFO (Last In, First Out)</span>
+      </div>
+
+      <div className="mt-6">
+        <CodePanel title="Stack (Python)" code={dataStructureCode.stack} activeLines={activeLines} codeContext="operation" />
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Search, RotateCcw } from 'lucide-react';
 import { BSTNode } from '../../types';
+import CodePanel from '../UI/CodePanel';
+import { dataStructureCode } from '../../data/dataStructureCode';
 
 /**
  * Simple binary search tree implementation for visualization.
@@ -99,12 +101,23 @@ class BinarySearchTree {
   }
 }
 
+/**
+ * Helper to find the line range for a function in the BST code.
+ */
+function getFunctionLines(fnName: string): number[] {
+  const lines = dataStructureCode.bst.split('\n');
+  const start = lines.findIndex((line) => line.includes(`def ${fnName}(`));
+  if (start === -1) return [];
+  return [start + 1, Math.min(start + 8, lines.length)];
+}
+
 export default function BSTVisualizer() {
   const [bst] = useState(() => new BinarySearchTree());
   const [tree, setTree] = useState<BSTNode | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
+  const [activeLines, setActiveLines] = useState<number[]>([]);
   
   /**
    * Recomputes the SVG layout positions for the current tree.
@@ -136,7 +149,12 @@ export default function BSTVisualizer() {
     const newNode = bst.insert(value);
     if (newNode) {
       setHighlightedNode(value);
-      setTimeout(() => setHighlightedNode(null), 1000);
+      const lines = getFunctionLines('insert');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setHighlightedNode(null);
+        setActiveLines([]);
+      }, 1000);
     }
     updateTree();
     setInputValue('');
@@ -152,6 +170,9 @@ export default function BSTVisualizer() {
     
     bst.delete(value);
     updateTree();
+    const lines = getFunctionLines('delete');
+    setActiveLines(lines);
+    setTimeout(() => setActiveLines([]), 1000);
     setInputValue('');
     setSearchResult(null);
   };
@@ -167,9 +188,17 @@ export default function BSTVisualizer() {
     if (found) {
       setSearchResult(`Found: ${value}`);
       setHighlightedNode(value);
-      setTimeout(() => setHighlightedNode(null), 1500);
+      const lines = getFunctionLines('contains');
+      setActiveLines(lines);
+      setTimeout(() => {
+        setHighlightedNode(null);
+        setActiveLines([]);
+      }, 1500);
     } else {
       setSearchResult(`Not found: ${value}`);
+      const lines = getFunctionLines('contains');
+      setActiveLines(lines);
+      setTimeout(() => setActiveLines([]), 1500);
     }
   };
   
@@ -284,6 +313,11 @@ export default function BSTVisualizer() {
             Tree is empty. Insert values to begin.
           </div>
         )}
+      </div>
+
+      {/* Code Panel */}
+      <div className="mt-6">
+        <CodePanel title="BST" code={dataStructureCode.bst} activeLines={activeLines} />
       </div>
     </div>
   );
