@@ -101,8 +101,7 @@ function App() {
       </div>
       
       <footer className="border-t border-slate-200 mt-12 py-6 text-center text-slate-500 text-sm">
-        <p>Algo-Vis | Interactive Algorithm Visualizer</p>
-        <p className="mt-1">Built with React, TypeScript, and Tailwind CSS</p>
+        <p>Copyright © 2026 WazronTechnologies. All rights reserved.</p>
       </footer>
     </div>
   );
