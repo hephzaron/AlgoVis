@@ -1,10 +1,10 @@
 /**
  * Props for the sorting visualization statistics panel.
  */
-import React from 'react';
 import { BarChart3, GitCompare, Shuffle, Clock, List, Layers } from 'lucide-react';
 
 interface StatsPanelProps {
+  className?: string;
   algorithm: string;
   comparisons: number;
   swaps: number;
@@ -18,6 +18,7 @@ interface StatsPanelProps {
  * Displays complexity and step metrics for sorting visualizations.
  */
 export default function StatsPanel({
+  className = '',
   algorithm,
   comparisons,
   swaps,
@@ -45,7 +46,7 @@ export default function StatsPanel({
   const complexity = getComplexity();
   
   return (
-    <div className="card space-y-4">
+    <div className={`card space-y-4 h-full ${className}`.trim()}>
       <h3 className="text-xl font-bold flex items-center gap-2">
         <BarChart3 size={20} /> Algorithm Stats
       </h3>
@@ -79,12 +80,19 @@ export default function StatsPanel({
             </span>
             <span className="font-bold text-blue-600">{comparisons}</span>
           </div>
-          
+
           <div className="flex justify-between items-center mb-2">
             <span className="text-slate-600 flex items-center gap-2">
               <Shuffle size={16} /> Swaps:
             </span>
             <span className="font-bold text-blue-600">{swaps}</span>
+          </div>
+
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-slate-600 flex items-center gap-2">
+              <Clock size={16} /> Time Elapsed:
+            </span>
+            <span className="font-semibold">{timeMs.toFixed(1)} ms</span>
           </div>
           
           <div className="flex justify-between items-center">

@@ -87,9 +87,9 @@ export default function SortingVisualizer({ algorithm }: SortingVisualizerProps)
   const maxValue = Math.max(...currentArray, 100);
   
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 card">
+    <div className="space-y-6 min-w-0">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,66%)_minmax(320px,34%)] lg:items-stretch min-w-0">
+        <div className="card flex flex-col h-full">
           <h2 className="text-2xl font-bold mb-4">Sorting Visualization</h2>
           
           <div className="h-96 flex items-end justify-center gap-1">
@@ -127,8 +127,9 @@ export default function SortingVisualizer({ algorithm }: SortingVisualizerProps)
           />
         </div>
         
-        <div className="space-y-6">
+        <div className="h-full">
           <StatsPanel
+            className="h-full"
             algorithm={algorithm}
             comparisons={stats.comparisons}
             swaps={stats.swaps}

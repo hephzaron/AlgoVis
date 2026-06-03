@@ -1,10 +1,10 @@
 /**
  * Props for the search visualization statistics panel.
  */
-import React from 'react';
 import { BarChart3, Clock, List, Search as SearchIcon, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface SearchStatsPanelProps {
+  className?: string;
   algorithm: string;
   comparisons: number;
   timeMs: number;
@@ -19,6 +19,7 @@ interface SearchStatsPanelProps {
  * Displays runtime metrics and result details for searching visualizations.
  */
 export default function SearchStatsPanel({
+  className = '',
   algorithm,
   comparisons,
   timeMs,
@@ -43,7 +44,7 @@ export default function SearchStatsPanel({
   const resultIcon = result.includes('Found') ? <CheckCircle2 size={16} className="text-emerald-500" /> : <AlertTriangle size={16} className="text-amber-500" />;
 
   return (
-    <div className="card space-y-4">
+    <div className={`card space-y-4 h-full ${className}`.trim()}>
       <h3 className="text-xl font-bold flex items-center gap-2">
         <BarChart3 size={20} /> Search Stats
       </h3>
@@ -92,6 +93,12 @@ export default function SearchStatsPanel({
           </div>
         </div>
 
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-slate-600 flex items-center gap-2">
+              <Clock size={16} /> Time Elapsed
+            </span>
+            <span className="font-semibold">{timeMs.toFixed(1)} ms</span>
+          </div>
         <div className="border-t pt-3">
           <div className="flex justify-between items-center">
             <span className="text-slate-600">Progress:</span>

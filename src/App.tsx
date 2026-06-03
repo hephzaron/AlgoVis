@@ -94,7 +94,7 @@ function App() {
             onAlgorithmChange={(algo) => setActiveAlgorithm(algo)}
           />
           
-          <main className="flex-1">
+          <main className="flex-1 min-w-0">
             {renderVisualizer()}
           </main>
         </div>
