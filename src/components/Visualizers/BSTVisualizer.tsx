@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Search, RotateCcw } from 'lucide-react';
 import { BSTNode } from '../../types';
@@ -126,6 +126,7 @@ export default function BSTVisualizer() {
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [highlightedNode, setHighlightedNode] = useState<number | null>(null);
   const [activeLines, setActiveLines] = useState<number[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   
   /**
    * Recomputes the SVG layout positions for the current tree.
@@ -166,6 +167,7 @@ export default function BSTVisualizer() {
     updateTree();
     setInputValue('');
     setSearchResult(null);
+    inputRef.current?.focus();
   };
   
   /**
@@ -181,6 +183,7 @@ export default function BSTVisualizer() {
     setTimeout(() => setActiveLines([]), 1000);
     setInputValue('');
     setSearchResult(null);
+    inputRef.current?.focus();
   };
   
   /**
@@ -204,6 +207,7 @@ export default function BSTVisualizer() {
       setActiveLines(getFunctionLines(dataStructureCode.bst, 'contains', 7));
       setTimeout(() => setActiveLines([]), 1500);
     }
+    inputRef.current?.focus();
   };
   
   const handleReset = () => {
@@ -276,6 +280,7 @@ export default function BSTVisualizer() {
       {/* Controls */}
       <div className="flex gap-3 mb-6">
         <input
+          ref={inputRef}
           type="number"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

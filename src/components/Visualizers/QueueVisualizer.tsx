@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, ArrowRight } from 'lucide-react';
 import CodePanel from '../UI/CodePanel';
@@ -91,6 +91,7 @@ export default function QueueVisualizer() {
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
   const [activeLines, setActiveLines] = useState<number[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   
   const updateDisplay = useCallback(() => {
     setItems(queue.getItems());
@@ -110,6 +111,7 @@ export default function QueueVisualizer() {
       setActiveLines([]);
     }, 1000);
     setInputValue('');
+    inputRef.current?.focus();
   };
   
   const handleDequeue = () => {
@@ -131,6 +133,7 @@ export default function QueueVisualizer() {
         setActiveLines([]);
       }, 1500);
     }
+    inputRef.current?.focus();
   };
   
   const handlePeek = () => {
@@ -151,6 +154,7 @@ export default function QueueVisualizer() {
         setActiveLines([]);
       }, 1500);
     }
+    inputRef.current?.focus();
   };
   
   const handleClear = () => {
@@ -162,6 +166,7 @@ export default function QueueVisualizer() {
       setLastAction(null);
       setActiveLines([]);
     }, 1000);
+    inputRef.current?.focus();
   };
   
   return (
@@ -224,6 +229,7 @@ export default function QueueVisualizer() {
       {/* Controls */}
       <div className="flex flex-wrap gap-3 mb-4">
         <input
+          ref={inputRef}
           type="number"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
