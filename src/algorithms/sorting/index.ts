@@ -104,7 +104,7 @@ export function* quickSortSteps(arr: number[]): Generator<AlgorithmStep> {
   /**
    * Partitions the current array segment around a pivot element.
    */
-  function* partition(low: number, high: number): Generator<number> {
+  function* partition(low: number, high: number): Generator<AlgorithmStep, number, unknown> {
     const pivot = array[high];
     let i = low - 1;
     
