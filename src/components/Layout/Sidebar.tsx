@@ -44,6 +44,7 @@ const modules = [
       { id: 'queue', name: 'Queue', complexity: 'O(1)' },
       { id: 'bst', name: 'Binary Search Tree', complexity: 'O(log n)' },
       { id: 'hash', name: 'Hash Table', complexity: 'O(1)' },
+      { id: 'linkedList', name: 'Linked List', complexity: 'O(n)' }
     ]
   },
   {

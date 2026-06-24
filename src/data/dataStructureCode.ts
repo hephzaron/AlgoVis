@@ -129,4 +129,124 @@ class BST:
                 return True
         return False
 `,
+linkedList: `class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self._head = None
+        self._tail = None
+        self._size = 0
+
+    def append(self, value):
+        new_node = Node(value)
+        if self._head is None:
+            self._head = new_node
+            self._tail = new_node
+        else:
+            self._tail.next = new_node
+            self._tail = new_node
+        self._size += 1
+
+    def remove_first(self):
+        if self._head is None:
+            return None
+        value = self._head.value
+        self._head = self._head.next
+        self._size -= 1
+        if self._head is None:
+            self._tail = None
+        return value
+
+    def peek(self):
+        if self._head is None:
+            return None
+        return self._head.value
+
+    def is_empty(self):
+        return self._size == 0
+
+    def size(self):
+        return self._size
+
+    def get_items(self):
+        items = []
+        current = self._head
+        while current is not None:
+            items.append(current.value)
+            current = current.next
+        return items
+
+    def clear(self):
+        self._head = None
+        self._tail = None
+        self._size = 0
+
+    def insert_at(self, value, index):
+        if index < 0 or index > self._size:
+            return False
+        
+        if index == self._size:
+            self.append(value)
+            return True
+        
+        new_node = Node(value)
+        
+        if index == 0:
+            new_node.next = self._head
+            self._head = new_node
+            if self._tail is None:
+                self._tail = new_node
+            self._size += 1
+            return True
+        
+        current = self._head
+        current_index = 0
+        while current is not None and current_index < index - 1:
+            current = current.next
+            current_index += 1
+        
+        if current is not None:
+            new_node.next = current.next
+            current.next = new_node
+            self._size += 1
+            return True
+        
+        return False
+
+    def remove_at(self, index):
+        if index < 0 or index >= self._size:
+            return None
+        
+        if index == 0:
+            return self.remove_first()
+        
+        current = self._head
+        current_index = 0
+        while current is not None and current_index < index - 1:
+            current = current.next
+            current_index += 1
+        
+        if current is not None and current.next is not None:
+            value = current.next.value
+            current.next = current.next.next
+            self._size -= 1
+            if current.next is None:
+                self._tail = current
+            return value
+        
+        return None
+
+    def index_of(self, value):
+        current = self._head
+        index = 0
+        while current is not None:
+            if current.value == value:
+                return index
+            current = current.next
+            index += 1
+        return -1
+`,
 };

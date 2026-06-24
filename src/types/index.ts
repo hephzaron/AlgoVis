@@ -21,10 +21,10 @@ export type SortingAlgorithm = 'merge' | 'quick' | 'insertion' | 'bubble' | 'sel
  */
 export type SearchingAlgorithm = 'linear' | 'binary';
 
-/**
+/**s
  * Supported data structure visualizer names.
  */
-export type DataStructure = 'stack' | 'queue' | 'bst' | 'hash';
+export type DataStructure = 'stack' | 'queue' | 'bst' | 'hash' |'linkedList' ;
 
 /**
  * Supported graph algorithm visualizer names.

@@ -12,6 +12,8 @@ import StackVisualizer from './components/Visualizers/StackVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
+import HashTableVisualizer from './components/Visualizers/HashTableVisualizer.tsx';
+import LinkedListVisualizer from './components/Visualizers/LinkedListViewer.tsx';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
@@ -60,6 +62,10 @@ function App() {
             return <QueueVisualizer />;
           case 'bst':
             return <BSTVisualizer />;
+          case 'hash':
+            return <HashTableVisualizer />;
+          case 'linkedList':
+            return <LinkedListVisualizer />;
           default:
             return <div className="card text-center py-20">Coming soon...</div>;
         }
