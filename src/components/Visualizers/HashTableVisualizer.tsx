@@ -5,10 +5,14 @@ import { dataStructureCode } from '../../data/dataStructureCode';
 
 /**
  * Represents a key-value pair entry in a hash table bucket.
- * @typedef {[string, number]} Entry
- * @property {string} 0 - The key string
- * @property {number} 1 - The value number
+ * @interface Entry
+ * @property {string} key - The key string
+ * @property {number} value - The associated value
  */
+interface Entry {
+  key: string;
+  value: number;
+}
 
 /**
  * Simple hash table implementation for visualization purposes.
@@ -25,11 +29,11 @@ import { dataStructureCode } from '../../data/dataStructureCode';
 class HashTable {
   /** 
    * Internal storage using Map for buckets.
-   * Key: bucket index (number), Value: array of [key, value] entries
+   * Key: bucket index (number), Value: array of Entry objects
    * @private
-   * @type {Map<number, [string, number][]>}
+   * @type {Map<number, Entry[]>}
    */
-  private buckets: Map<number, [string, number][]> = new Map();
+  private buckets: Map<number, Entry[]> = new Map();
   
   /** 
    * Number of buckets in the hash table.
@@ -56,11 +60,11 @@ class HashTable {
       this.buckets.set(idx, []);
     }
     const bucket = this.buckets.get(idx)!;
-    const existing = bucket.findIndex(([k]) => k === key);
+    const existing = bucket.findIndex((entry: Entry) => entry.key === key);
     if (existing >= 0) {
-      bucket[existing] = [key, value];
+      bucket[existing] = { key, value };
     } else {
-      bucket.push([key, value]);
+      bucket.push({ key, value });
     }
   }
 
@@ -80,8 +84,8 @@ class HashTable {
     const idx = this.hash(key);
     const bucket = this.buckets.get(idx);
     if (!bucket) return undefined;
-    const entry = bucket.find(([k]) => k === key);
-    return entry ? entry[1] : undefined;
+    const entry = bucket.find((entry: Entry) => entry.key === key);
+    return entry ? entry.value : undefined;
   }
 
   /**
@@ -100,7 +104,7 @@ class HashTable {
     const idx = this.hash(key);
     const bucket = this.buckets.get(idx);
     if (!bucket) return false;
-    const index = bucket.findIndex(([k]) => k === key);
+    const index = bucket.findIndex((entry: Entry) => entry.key === key);
     if (index >= 0) {
       bucket.splice(index, 1);
       return true;
@@ -131,13 +135,13 @@ class HashTable {
   /**
    * Returns all entries in the hash table for visualization purposes.
    * 
-   * @returns {Array<[number, [string, number][]]>} Array of [bucketIndex, entries] pairs
+   * @returns {Array<[number, Entry[]]>} Array of [bucketIndex, entries] pairs
    * 
    * @example
    * const entries = hashTable.getEntries();
-   * // Returns: [[0, [['key1', 1], ['key2', 2]]], [1, [['key3', 3]]]]
+   * // Returns: [[0, [{key: 'key1', value: 1}, {key: 'key2', value: 2}]], [1, [{key: 'key3', value: 3}]]]
    */
-  getEntries(): Array<[number, [string, number][]]> {
+  getEntries(): Array<[number, Entry[]]> {
     return Array.from(this.buckets.entries());
   }
 
@@ -204,9 +208,9 @@ function HashTableVisualizer() {
   
   /** 
    * State for the current entries to display.
-   * @type {[Array<[number, [string, number][]]>, React.Dispatch<React.SetStateAction<Array<[number, [string, number][]]>>>]}
+   * @type {[Array<[number, Entry[]]>, React.Dispatch<React.SetStateAction<Array<[number, Entry[]]>>>]}
    */
-  const [entries, setEntries] = useState<Array<[number, [string, number][]]>>([]);
+  const [entries, setEntries] = useState<Array<[number, Entry[]]>>([]);
   
   /** 
    * State for the key input field.
@@ -481,9 +485,9 @@ function HashTableVisualizer() {
                 <span className="font-mono font-bold text-sm bg-slate-300 px-2 py-1 rounded">Bucket {idx}</span>
                 {/** Bucket entries */}
                 <div className="flex flex-wrap gap-2">
-                  {bucket.map(([key, value], i) => (
+                  {bucket.map((entry: Entry, i: number) => (
                     <div key={i} className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-mono">
-                      {key}: {value}
+                      {entry.key}: {entry.value}
                     </div>
                   ))}
                 </div>
