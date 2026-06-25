@@ -249,4 +249,181 @@ class LinkedList:
             index += 1
         return -1
 `,
+graph: `class GraphNode:
+    def __init__(self, value, node_id):
+        self.value = value
+        self.id = node_id
+        self.neighbors = {}
+        self.position = {'x': random.random() * 300 + 100, 'y': random.random() * 300 + 100}
+
+    def add_neighbor(self, node):
+        self.neighbors[node.id] = node
+
+    def remove_neighbor(self, node_id):
+        if node_id in self.neighbors:
+            del self.neighbors[node_id]
+            return True
+        return False
+
+    def has_neighbor(self, node_id):
+        return node_id in self.neighbors
+
+    def get_neighbors(self):
+        return list(self.neighbors.keys())
+
+    def get_degree(self):
+        return len(self.neighbors)
+
+class Graph:
+    def __init__(self):
+        self.nodes = {}
+        self.size = 0
+
+    def add_node(self, value, node_id):
+        if node_id in self.nodes:
+            raise ValueError(f"Node with ID {node_id} already exists")
+        node = GraphNode(value, node_id)
+        self.nodes[node_id] = node
+        self.size += 1
+        return node
+
+    def remove_node(self, node_id):
+        if node_id not in self.nodes:
+            return False
+        
+        # Remove all edges pointing to this node
+        for node in self.nodes.values():
+            node.remove_neighbor(node_id)
+        
+        del self.nodes[node_id]
+        self.size -= 1
+        return True
+
+    def get_node(self, node_id):
+        return self.nodes.get(node_id)
+
+    def add_edge(self, from_id, to_id):
+        if from_id not in self.nodes or to_id not in self.nodes:
+            return False
+        
+        from_node = self.nodes[from_id]
+        to_node = self.nodes[to_id]
+        from_node.add_neighbor(to_node)
+        to_node.add_neighbor(from_node)  # Undirected graph
+        return True
+
+    def remove_edge(self, from_id, to_id):
+        if from_id not in self.nodes or to_id not in self.nodes:
+            return False
+        
+        from_node = self.nodes[from_id]
+        to_node = self.nodes[to_id]
+        return from_node.remove_neighbor(to_id) and to_node.remove_neighbor(from_id)
+
+    def has_edge(self, from_id, to_id):
+        if from_id not in self.nodes:
+            return False
+        return self.nodes[from_id].has_neighbor(to_id)
+
+    def get_nodes(self):
+        return list(self.nodes.values())
+
+    def get_edges(self):
+        edges = []
+        seen = set()
+        for node_id, node in self.nodes.items():
+            for neighbor_id in node.get_neighbors():
+                key = '-'.join(sorted([node_id, neighbor_id]))
+                if key not in seen:
+                    edges.append({'from': node_id, 'to': neighbor_id})
+                    seen.add(key)
+        return edges
+
+    def clear(self):
+        self.nodes.clear()
+        self.size = 0
+
+    def get_stats(self):
+        node_list = self.get_nodes()
+        edge_list = self.get_edges()
+        degrees = [node.get_degree() for node in node_list]
+        max_degree = max(degrees) if degrees else 0
+        min_degree = min(degrees) if degrees else 0
+        avg_degree = (len(edge_list) * 2) / len(node_list) if node_list else 0
+        
+        # Detect cycles (simplified)
+        has_cycle = any(d > 1 for d in degrees) and len(node_list) > 2
+        
+        # Count connected components (BFS)
+        components = 0
+        visited = set()
+        for node in node_list:
+            if node.id not in visited:
+                components += 1
+                queue = [node.id]
+                while queue:
+                    current_id = queue.pop(0)
+                    if current_id in visited:
+                        continue
+                    visited.add(current_id)
+                    current_node = self.nodes.get(current_id)
+                    if current_node:
+                        for neighbor_id in current_node.get_neighbors():
+                            if neighbor_id not in visited:
+                                queue.append(neighbor_id)
+        
+        return {
+            'node_count': len(node_list),
+            'edge_count': len(edge_list),
+            'average_degree': avg_degree,
+            'max_degree': max_degree,
+            'min_degree': min_degree,
+            'connected_components': components,
+            'has_cycle': has_cycle
+        }
+
+    def force_directed_layout(self, iterations=50, spring_constant=0.1, repulsion_constant=100):
+        import random
+        node_list = self.get_nodes()
+        edge_list = self.get_edges()
+        
+        if not node_list:
+            return
+        
+        for _ in range(iterations):
+            # Apply repulsion between all nodes
+            for i in range(len(node_list)):
+                for j in range(i + 1, len(node_list)):
+                    dx = node_list[i].position['x'] - node_list[j].position['x']
+                    dy = node_list[i].position['y'] - node_list[j].position['y']
+                    dist = (dx * dx + dy * dy) ** 0.5 + 0.1
+                    force = repulsion_constant / (dist * dist)
+                    
+                    node_list[i].position['x'] += (dx / dist) * force * 0.01
+                    node_list[i].position['y'] += (dy / dist) * force * 0.01
+                    node_list[j].position['x'] -= (dx / dist) * force * 0.01
+                    node_list[j].position['y'] -= (dy / dist) * force * 0.01
+            
+            # Apply attraction along edges
+            for edge in edge_list:
+                from_node = self.nodes.get(edge['from'])
+                to_node = self.nodes.get(edge['to'])
+                if not from_node or not to_node:
+                    continue
+                
+                dx = from_node.position['x'] - to_node.position['x']
+                dy = from_node.position['y'] - to_node.position['y']
+                dist = (dx * dx + dy * dy) ** 0.5 + 0.1
+                force = spring_constant * dist
+                
+                from_node.position['x'] -= (dx / dist) * force * 0.01
+                from_node.position['y'] -= (dy / dist) * force * 0.01
+                to_node.position['x'] += (dx / dist) * force * 0.01
+                to_node.position['y'] += (dy / dist) * force * 0.01
+            
+            # Clamp positions
+            for node in node_list:
+                node.position['x'] = max(50, min(700, node.position['x']))
+                node.position['y'] = max(50, min(500, node.position['y']))
+`
 };

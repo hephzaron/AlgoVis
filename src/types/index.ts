@@ -24,7 +24,7 @@ export type SearchingAlgorithm = 'linear' | 'binary';
 /**s
  * Supported data structure visualizer names.
  */
-export type DataStructure = 'stack' | 'queue' | 'bst' | 'hash' |'linkedList' ;
+export type DataStructure = 'stack' | 'queue' | 'bst' | 'hash' |'linkedList' | 'graph' ;
 
 /**
  * Supported graph algorithm visualizer names.
