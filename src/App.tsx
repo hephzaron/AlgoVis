@@ -10,11 +10,11 @@ import SortingVisualizer from './components/Visualizers/SortingVisualizer';
 import SearchingVisualizer from './components/Visualizers/SearchingVisualizer.tsx';
 import StackVisualizer from './components/Visualizers/StackVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
-import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
 import HashTableVisualizer from './components/Visualizers/HashTableVisualizer.tsx';
 import LinkedListVisualizer from './components/Visualizers/LinkedListViewer.tsx';
 import GraphVisualizer from './components/Visualizers/GraphVisualizer';
+import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
