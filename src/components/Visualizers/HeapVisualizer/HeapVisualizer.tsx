@@ -1,11 +1,19 @@
 // src/components/HeapVisualizer.tsx
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Trash2, Eye, ArrowUp, ArrowDown, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Eye, ArrowUp, RefreshCw } from 'lucide-react';
 import CodePanel from '../../UI/CodePanel';
 import { dataStructureCode } from '../../../data/dataStructureCode';
 import { Heap } from './Heap';
+import {
+  getTreeNodeStyle,
+  calculateHeapVisualProperties,
+  getNodeKey,
+  isLeafNode,
+  getNodeLevel,
+  type TreeVisualizationConfig,
+} from './HeapViewOptimizer';
 
 /**
  * Helper to find the line numbers for a function in the heap code
@@ -33,17 +41,28 @@ interface HeapVisualNode<T> {
   index: number;
   level: number;
   position: number;
-  isHighlighted?: boolean;
+  isHighlighted: boolean;
+  isLeaf: boolean;
 }
 
 /**
+ * Visualization configuration
+ */
+const VISUAL_CONFIG: TreeVisualizationConfig = {
+  containerHeight: 350,
+  containerWidth: 700,
+  padding: 20,
+  minNodeSize: 28,
+  maxNodeSize: 80,
+};
+
+/**
  * Visual component for interacting with a Heap data structure
- * Supports max-heap, min-heap, insert, extractRoot, peek, clear operations
  */
 export default function HeapVisualizer() {
-  // State management
+  // State - FIXED: heap is now a state variable that can be updated
   const [heapType, setHeapType] = useState<'max' | 'min'>('max');
-  const [heap, setHeap] = useState(() => new Heap<number>({ type: heapType }));
+  const [heap, setHeap] = useState(() => new Heap<number>({ type: 'max' }));
   const [items, setItems] = useState<number[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [lastAction, setLastAction] = useState<string | null>(null);
@@ -52,39 +71,41 @@ export default function HeapVisualizer() {
   const [animatingNode, setAnimatingNode] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Update display when heap changes
+  // Update display
   const updateDisplay = useCallback(() => {
     setItems(heap.getItems());
   }, [heap]);
 
-  // Handle heap type change - recreate heap with existing items
+  // Handle heap type change - FIXED: properly creates new heap with correct type
   const handleHeapTypeChange = useCallback((type: 'max' | 'min') => {
-    // Save current items
+    // Get current items before clearing
     const currentItems = heap.getItems();
     
-    // Create new heap with new type
+    // Create new heap with the new type
     const newHeap = new Heap<number>({ type });
     
     // Re-insert all items into the new heap
     currentItems.forEach(value => newHeap.insert(value));
     
+    // Update state with new heap
     setHeap(newHeap);
     setHeapType(type);
     setItems(newHeap.getItems());
     setLastAction(`Switched to ${type}-heap`);
+    
     setTimeout(() => setLastAction(null), 2000);
   }, [heap]);
 
-  // Insert a value into the heap
+  // Insert value - FIXED: now uses setHeap when needed
   const handleInsert = useCallback(() => {
     const value = parseInt(inputValue);
     if (isNaN(value)) return;
 
     const insertIndex = heap.insert(value);
-    updateDisplay();
+    setItems(heap.getItems()); // Update items directly
     setLastAction(`Inserted: ${value}`);
     
-    // Highlight the newly inserted node and its ancestors
+    // Highlight path to root
     const indices = [insertIndex];
     let parent = Math.floor((insertIndex - 1) / 2);
     while (parent >= 0) {
@@ -93,7 +114,6 @@ export default function HeapVisualizer() {
     }
     setHighlightIndices(indices);
     setAnimatingNode(insertIndex);
-    
     setActiveLines(getFunctionLines(dataStructureCode.heap, 'insert', 3));
     
     setTimeout(() => {
@@ -104,14 +124,13 @@ export default function HeapVisualizer() {
     
     setInputValue('');
     inputRef.current?.focus();
-  }, [inputValue, heap, updateDisplay]);
+  }, [inputValue, heap]);
 
-
-  // Extract the root element
+  // Extract root - FIXED: now uses setHeap when needed
   const handleExtractRoot = useCallback(() => {
     const extracted = heap.extractRoot();
     if (extracted !== undefined) {
-      updateDisplay();
+      setItems(heap.getItems());
       setLastAction(`Extracted root: ${extracted}`);
       setHighlightIndices([0]);
       setActiveLines(getFunctionLines(dataStructureCode.heap, 'extractRoot', 4));
@@ -124,9 +143,9 @@ export default function HeapVisualizer() {
       setTimeout(() => setLastAction(null), 1500);
     }
     inputRef.current?.focus();
-  }, [heap, updateDisplay]);
+  }, [heap]);
 
-  // Peek at the root element
+  // Peek root
   const handlePeek = useCallback(() => {
     const root = heap.peek();
     if (root !== undefined) {
@@ -144,10 +163,10 @@ export default function HeapVisualizer() {
     inputRef.current?.focus();
   }, [heap]);
 
-  // Clear the heap
+  // Clear heap
   const handleClear = useCallback(() => {
     heap.clear();
-    updateDisplay();
+    setItems([]);
     setLastAction('Heap cleared');
     setActiveLines(getFunctionLines(dataStructureCode.heap, 'clear', 1));
     setTimeout(() => {
@@ -155,91 +174,70 @@ export default function HeapVisualizer() {
       setActiveLines([]);
     }, 1000);
     inputRef.current?.focus();
-  }, [heap, updateDisplay]);
+  }, [heap]);
 
-  // Batch insert random values
+  // Batch insert
   const handleBatchInsert = useCallback(() => {
     const randomValues = Array.from({ length: 5 }, () => 
       Math.floor(Math.random() * 100)
     );
-    
     randomValues.forEach(value => heap.insert(value));
-    updateDisplay();
+    setItems(heap.getItems());
     setLastAction(`Inserted: ${randomValues.join(', ')}`);
-    
     setTimeout(() => setLastAction(null), 2000);
     inputRef.current?.focus();
-  }, [heap, updateDisplay]);
+  }, [heap]);
 
-  // Build heap visualization with tree structure
-  const buildVisualTree = useCallback((): HeapVisualNode<number>[] => {
-    const visualNodes: HeapVisualNode<number>[] = [];
+  // Build visual tree with memoization
+  const visualTree = useMemo(() => {
     const size = items.length;
-    
-    if (size === 0) return visualNodes;
-    
+    if (size === 0) return [];
+
+    const nodes: HeapVisualNode<number>[] = [];
+
     for (let i = 0; i < size; i++) {
-      const level = Math.floor(Math.log2(i + 1));
+      const level = getNodeLevel(i);
       const levelStart = Math.pow(2, level) - 1;
       const levelPosition = i - levelStart;
       const maxItemsInLevel = Math.pow(2, level);
       
-      visualNodes.push({
+      nodes.push({
         value: items[i],
         index: i,
         level: level,
         position: levelPosition / maxItemsInLevel,
-        isHighlighted: highlightIndices.includes(i)
+        isHighlighted: highlightIndices.includes(i),
+        isLeaf: isLeafNode(i, size),
       });
     }
-    
-    return visualNodes;
+
+    return nodes;
   }, [items, highlightIndices]);
 
-  const visualTree = buildVisualTree();
+  // Calculate the maximum level from the visual tree
+  const maxLevel = useMemo(() => {
+    if (visualTree.length === 0) return 0;
+    return visualTree.reduce((max, node) => Math.max(max, node.level), 0);
+  }, [visualTree]);
 
-  // Calculate node positioning for tree visualization
-  const getNodeStyle = (node: HeapVisualNode<number>, totalLevels: number) => {
+  // Calculate visual properties using maxLevel
+  const visualProps = useMemo(() => {
+    if (visualTree.length === 0) {
+      return { nodeSize: 60, totalLevels: 1, containerHeight: 300 };
+    }
+    return calculateHeapVisualProperties(
+      visualTree.length,
+      maxLevel,
+      VISUAL_CONFIG
+    );
+  }, [visualTree, maxLevel]);
 
-    // Calculate dynamic spacing based on total levels
-    const containerHeight = 280; // Available height for the tree
-    const padding = 20;
-    const availableHeight = containerHeight - (padding * 2);
-
-    // Distribute levels evenly with more space for deeper trees
-    const levelHeight = totalLevels > 1 
-      ? availableHeight / (totalLevels) 
-      : 80;
-    const top = node.level * levelHeight + 10;
-    
-    const availableWidth = 100 - (padding * 2);
-    const levelNodes = Math.pow(2, node.level);
-    const nodeWidth = availableWidth / levelNodes;
-    const left = padding + (node.position * availableWidth) + (nodeWidth / 2);
-    
-    return {
-      top: `${top}px`,
-      left: `${left}%`,
-      transform: 'translateX(-50%)',
-    };
-  };
-
-  // Get the maximum level for visualization
-  const maxLevel = visualTree.reduce((max, node) => Math.max(max, node.level), 0);
-
-  // Get the color for a node based on its state
-  const getNodeColor = (node: HeapVisualNode<number>) => {
-    if (node.isHighlighted) return 'ring-4 ring-yellow-500 bg-yellow-500';
-    if (node.index === 0) return 'bg-purple-600';
-    if (node.level === maxLevel) return 'bg-green-500';
-    return 'bg-blue-500';
-  };
-
-  // Render tree edges
-  const renderEdges = () => {
+  // Render edges between nodes
+  const renderEdges = useCallback(() => {
     const edges: JSX.Element[] = [];
     const size = items.length;
-    
+    const { nodeSize, totalLevels } = visualProps;
+
     for (let i = 0; i < size; i++) {
       const left = 2 * i + 1;
       const right = 2 * i + 2;
@@ -247,20 +245,30 @@ export default function HeapVisualizer() {
       const parentNode = visualTree.find(n => n.index === i);
       if (!parentNode) continue;
       
-      const parentStyle = getNodeStyle(parentNode, maxLevel);
-      
-      // Left child edge
+      const parentStyle = getTreeNodeStyle(
+        parentNode,
+        totalLevels,
+        nodeSize,
+        VISUAL_CONFIG
+      );
+
+      // Left child
       if (left < size) {
         const childNode = visualTree.find(n => n.index === left);
         if (childNode) {
-          const childStyle = getNodeStyle(childNode, maxLevel);
+          const childStyle = getTreeNodeStyle(
+            childNode,
+            totalLevels,
+            nodeSize,
+            VISUAL_CONFIG
+          );
           edges.push(
             <line
               key={`edge-${i}-${left}`}
               x1={parentStyle.left}
-              y1={parseFloat(parentStyle.top as string) + 35}
+              y1={parseFloat(parentStyle.top) + nodeSize / 2}
               x2={childStyle.left}
-              y2={parseFloat(childStyle.top as string)}
+              y2={parseFloat(childStyle.top)}
               stroke="#94a3b8"
               strokeWidth="2"
               className="edge-line"
@@ -268,19 +276,24 @@ export default function HeapVisualizer() {
           );
         }
       }
-      
-      // Right child edge
+
+      // Right child
       if (right < size) {
         const childNode = visualTree.find(n => n.index === right);
         if (childNode) {
-          const childStyle = getNodeStyle(childNode, maxLevel);
+          const childStyle = getTreeNodeStyle(
+            childNode,
+            totalLevels,
+            nodeSize,
+            VISUAL_CONFIG
+          );
           edges.push(
             <line
               key={`edge-${i}-${right}`}
               x1={parentStyle.left}
-              y1={parseFloat(parentStyle.top as string) + 35}
+              y1={parseFloat(parentStyle.top) + nodeSize / 2}
               x2={childStyle.left}
-              y2={parseFloat(childStyle.top as string)}
+              y2={parseFloat(childStyle.top)}
               stroke="#94a3b8"
               strokeWidth="2"
               className="edge-line"
@@ -289,18 +302,28 @@ export default function HeapVisualizer() {
         }
       }
     }
-    
+
     return edges;
-  };
+  }, [items, visualTree, visualProps]);
+
+  // Get node color based on state
+  const getNodeColor = useCallback((node: HeapVisualNode<number>) => {
+    if (node.isHighlighted) return 'ring-4 ring-yellow-500 bg-yellow-500';
+    if (animatingNode === node.index) return 'ring-4 ring-green-400 bg-green-500';
+    if (node.index === 0) return 'bg-purple-600';
+    if (node.isLeaf) return 'bg-green-500';
+    return 'bg-blue-500';
+  }, [animatingNode]);
 
   return (
     <div className="card">
       <h2 className="text-2xl font-bold mb-4">
         Heap Data Structure
         <span className="ml-4 text-sm font-normal text-slate-500">
-          ({heapType}-heap)
+          ({heapType}-heap · {items.length} nodes · {visualProps.totalLevels} levels)
         </span>
       </h2>
+
       {/* Heap Type Selection */}
       <div className="flex gap-2 mb-4">
         <button
@@ -319,38 +342,49 @@ export default function HeapVisualizer() {
             heapType === 'min'
               ? 'bg-purple-600 text-white'
               : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-          }`}>
+          }`}
+        >
           Min-Heap (Smallest Root)
         </button>
       </div>
+
       {/* Heap Visualization */}
-      <div className="relative mb-6 p-6 bg-slate-100 rounded-xl min-h-[300px]">
+      <div 
+        className="relative mb-6 p-4 bg-slate-100 rounded-xl overflow-hidden"
+        style={{ minHeight: `${visualProps.containerHeight}px` }}
+      >
         {items.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center text-slate-400 py-8">
             Heap is empty. Insert values to build the heap.
           </div>
         ) : (
-          <div className="relative w-full h-[300px]">
-            {/* Render edges first */}
+          <div 
+            className="relative w-full"
+            style={{ height: `${visualProps.containerHeight}px` }}
+          >
+            {/* Edges */}
             <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
               {renderEdges()}
             </svg>
             
-            {/* Render nodes */}
+            {/* Nodes */}
             <AnimatePresence>
               {visualTree.map((node) => {
-                const style = getNodeStyle(node, maxLevel);
+                const { nodeSize, totalLevels } = visualProps;
+                const style = getTreeNodeStyle(
+                  node,
+                  totalLevels,
+                  nodeSize,
+                  VISUAL_CONFIG
+                );
                 const isRoot = node.index === 0;
+                const nodeColor = getNodeColor(node);
                 
                 return (
                   <motion.div
-                    key={`${node.index}-${node.value}`}
+                    key={getNodeKey(node.index, node.value)}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ 
-                      scale: 1, 
-                      opacity: 1,
-                      y: 0
-                    }}
+                    animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
                     transition={{ 
                       type: 'spring', 
@@ -359,19 +393,31 @@ export default function HeapVisualizer() {
                       delay: node.level * 0.05
                     }}
                     className={`
-                      absolute w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold
+                      absolute rounded-xl flex items-center justify-center font-bold
                       transition-all duration-300
-                      ${getNodeColor(node)}
-                      ${node.isHighlighted ? 'scale-110 ring-4 ring-yellow-400' : ''}
-                      ${animatingNode === node.index ? 'scale-110 ring-4 ring-green-400' : ''}
+                      ${nodeColor}
+                      ${node.isHighlighted ? 'scale-110' : ''}
+                      ${animatingNode === node.index ? 'scale-110' : ''}
                       text-white shadow-lg
                     `}
-                    style={style}
+                    style={{
+                      width: `${style.size}px`,
+                      height: `${style.size}px`,
+                      fontSize: `${style.fontSize}px`,
+                      top: style.top,
+                      left: style.left,
+                      transform: style.transform,
+                    }}
                   >
                     {node.value}
                     {isRoot && (
-                      <div className="absolute -top-8 text-xs font-semibold text-purple-600 bg-white px-2 py-1 rounded-full shadow-sm">
+                      <div className="absolute -top-8 text-xs font-semibold text-purple-600 bg-white px-2 py-1 rounded-full shadow-sm whitespace-nowrap">
                         ROOT
+                      </div>
+                    )}
+                    {node.isLeaf && (
+                      <div className="absolute -bottom-6 text-[10px] font-semibold text-green-600 bg-white px-1.5 py-0.5 rounded shadow-sm">
+                        LEAF
                       </div>
                     )}
                   </motion.div>
@@ -423,10 +469,13 @@ export default function HeapVisualizer() {
       )}
 
       {/* Heap Info */}
-      <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between text-sm text-slate-500">
+      <div className="mt-4 pt-4 border-t border-slate-200 flex flex-wrap justify-between text-sm text-slate-500 gap-2">
         <span>Heap Size: {items.length}</span>
         <span>Type: {heapType.toUpperCase()}-HEAP</span>
         <span>Root: {items.length > 0 ? items[0] : 'None'}</span>
+        <span>Node Size: {Math.round(visualProps.nodeSize)}px</span>
+        <span>Levels: {visualProps.totalLevels}</span>
+        <span>Max Level: {maxLevel}</span>
       </div>
 
       {/* Code Panel */}

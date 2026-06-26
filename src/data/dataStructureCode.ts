@@ -448,8 +448,7 @@ class Heap:
             parent = (index - 1) // 2
             if self._compare(self.heap[index], self.heap[parent]) > 0:
                 # Swap with parent
-                self.heap[index], self.heap[parent] = \
-                    self.heap[parent], self.heap[index]
+                self.heap[index], self.heap[parent] = self.heap[parent], self.heap[index]
                 index = parent
             else:
                 break
@@ -480,8 +479,7 @@ class Heap:
                     largest = right
             
             if largest != index:
-                self.heap[index], self.heap[largest] = \
-                    self.heap[largest], self.heap[index]
+                self.heap[index], self.heap[largest] = self.heap[largest], self.heap[index]
                 index = largest
             else:
                 break
