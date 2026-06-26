@@ -425,5 +425,84 @@ class Graph:
             for node in node_list:
                 node.position['x'] = max(50, min(700, node.position['x']))
                 node.position['y'] = max(50, min(500, node.position['y']))
+`,
+heap: 
 `
+class Heap:
+    def __init__(self, heap_type='max'):
+        self.heap = []
+        self.type = heap_type  # 'max' or 'min'
+    
+    def _compare(self, a, b):
+        if self.type == 'max':
+            return a - b  # For max-heap
+        else:
+            return b - a  # For min-heap
+    
+    def insert(self, value):
+        # Add value to the end
+        self.heap.append(value)
+        # Heapify up
+        index = len(self.heap) - 1
+        while index > 0:
+            parent = (index - 1) // 2
+            if self._compare(self.heap[index], self.heap[parent]) > 0:
+                # Swap with parent
+                self.heap[index], self.heap[parent] = \
+                    self.heap[parent], self.heap[index]
+                index = parent
+            else:
+                break
+        return index
+    
+    def extract_root(self):
+        if len(self.heap) == 0:
+            return None
+        
+        root = self.heap[0]
+        # Replace root with last element
+        self.heap[0] = self.heap[-1]
+        self.heap.pop()
+        
+        # Heapify down
+        index = 0
+        while index < len(self.heap):
+            left = 2 * index + 1
+            right = 2 * index + 2
+            largest = index
+            
+            if left < len(self.heap):
+                if self._compare(self.heap[left], self.heap[largest]) > 0:
+                    largest = left
+            
+            if right < len(self.heap):
+                if self._compare(self.heap[right], self.heap[largest]) > 0:
+                    largest = right
+            
+            if largest != index:
+                self.heap[index], self.heap[largest] = \
+                    self.heap[largest], self.heap[index]
+                index = largest
+            else:
+                break
+        
+        return root
+    
+    def peek(self):
+        if len(self.heap) == 0:
+            return None
+        return self.heap[0]
+    
+    def clear(self):
+        self.heap = []
+    
+    def size(self):
+        return len(self.heap)
+    
+    def is_empty(self):
+        return len(self.heap) == 0
+    
+    def get_items(self):
+        return self.heap.copy()
+  `.trim(),
 };

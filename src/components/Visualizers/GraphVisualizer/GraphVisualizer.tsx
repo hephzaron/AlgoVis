@@ -1,5 +1,3 @@
-// components/GraphVisualizer/GraphVisualizer.tsx
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CodePanel from '../../UI/CodePanel';

@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/constants.ts
-
 import { NodeColorMap } from './types';
 
 /**

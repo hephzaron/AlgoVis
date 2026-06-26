@@ -1,4 +1,3 @@
-// components/GraphVisualizer/Graph.ts
 
 import { GraphNode } from './GraphNode';
 import { Edge, GraphStats, GraphInterface, GraphNodeInterface } from './types';

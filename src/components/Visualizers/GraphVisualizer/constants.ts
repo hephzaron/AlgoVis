@@ -1,5 +1,3 @@
-// components/GraphVisualizer/constants.ts
-
 import { LayoutConfig, NodeColorMap } from './types';
 
 /**

@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BSTVisualizer.tsx
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import CodePanel from '../../UI/CodePanel';
 import { dataStructureCode } from '../../../data/dataStructureCode';

@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BSTSearchResult.tsx
-
 import React from 'react';
 
 interface BSTSearchResultProps {

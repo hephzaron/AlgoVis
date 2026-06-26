@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/types.ts
-
 /**
  * Represents a node in a Binary Search Tree.
  * @interface BSTNode

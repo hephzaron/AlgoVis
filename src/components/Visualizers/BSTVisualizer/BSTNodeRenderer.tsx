@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BSTNodeRenderer.tsx
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BSTNode } from './types';

@@ -1,4 +1,3 @@
-// components/GraphVisualizer/GraphNode.ts
 
 import { Position, GraphNodeInterface } from './types';
 

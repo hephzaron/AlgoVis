@@ -1,4 +1,3 @@
-// components/GraphVisualizer/GraphLayoutSlider.tsx
 
 import React, { useState, useEffect } from 'react';
 import { Maximize2, Minimize2 } from 'lucide-react';

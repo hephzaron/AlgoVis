@@ -1,4 +1,3 @@
-// components/GraphVisualizer/GraphControls.tsx
 
 import React, { RefObject } from 'react';
 import { Plus, Minus, Link, GitBranch, Trash2 } from 'lucide-react';

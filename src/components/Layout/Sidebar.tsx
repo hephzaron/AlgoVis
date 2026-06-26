@@ -46,6 +46,7 @@ const modules = [
       { id: 'hash', name: 'Hash Table', complexity: 'O(1)' },
       { id: 'linkedList', name: 'Linked List', complexity: 'O(n)' },
       { id: 'graph', name: 'Graph', complexity: 'O(V + E)' },
+      { id: 'heap', name: 'Heap', complexity: 'O(log n)' },
     ]
   },
   {

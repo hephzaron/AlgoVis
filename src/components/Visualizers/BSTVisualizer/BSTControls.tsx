@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BSTControls.tsx
-
 import React, { RefObject } from 'react';
 import { Plus, Trash2, Search, RotateCcw } from 'lucide-react';
 

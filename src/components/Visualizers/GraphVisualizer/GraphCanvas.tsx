@@ -1,5 +1,3 @@
-// components/GraphVisualizer/GraphCanvas.tsx
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GitBranch } from 'lucide-react';

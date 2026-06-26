@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BST.ts
-
 import { BSTNode } from './types';
 import { ViewOptimizer, ViewConfig } from './ViewOptimizer';
 

@@ -1,5 +1,3 @@
-// components/GraphVisualizer/KeyboardShortcuts.tsx
-
 import React from 'react';
 
 export const KeyboardShortcuts: React.FC = () => {

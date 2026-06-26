@@ -1,5 +1,3 @@
-// components/GraphVisualizer/types.ts
-
 /**
  * Represents a position in 2D space for graph layout.
  */

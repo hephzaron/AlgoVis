@@ -1,5 +1,3 @@
-// components/Visualizers/BSTVisualizer/BSTCanvas.tsx
-
 import React, { useRef, useEffect } from 'react';
 import { BSTNode } from './types';
 import { BSTNodeRenderer } from './BSTNodeRenderer';

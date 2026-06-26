@@ -1,5 +1,3 @@
-// components/GraphVisualizer/NodeTooltip.tsx
-
 import React from 'react';
 import { motion } from 'framer-motion';
 

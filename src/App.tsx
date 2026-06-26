@@ -15,6 +15,7 @@ import HashTableVisualizer from './components/Visualizers/HashTableVisualizer.ts
 import LinkedListVisualizer from './components/Visualizers/LinkedListViewer.tsx';
 import GraphVisualizer from './components/Visualizers/GraphVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
+import HeapVisualizer from './components/Visualizers/HeapVisualizer';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
@@ -69,6 +70,8 @@ function App() {
             return <LinkedListVisualizer />;
           case 'graph':
             return <GraphVisualizer />;
+          case 'heap':
+            return <HeapVisualizer />;
           default:
             return <div className="card text-center py-20">Coming soon...</div>;
         }
