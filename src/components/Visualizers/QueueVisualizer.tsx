@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, RotateCcw, ArrowRight } from 'lucide-react';
 import CodePanel from '../UI/CodePanel';
 import { dataStructureCode } from '../../data/dataStructureCode';
+import { InfoHint } from '../Info/InfoHint';
+import { InfoButton } from '../Info/InfoButton';
 
 /**
  * Simple queue implementation used by the queue visualizer.
@@ -92,6 +94,7 @@ export default function QueueVisualizer() {
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
   const [activeLines, setActiveLines] = useState<number[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   const updateDisplay = useCallback(() => {
     setItems(queue.getItems());
@@ -171,6 +174,16 @@ export default function QueueVisualizer() {
   
   return (
     <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <div 
+              className="flex items-center gap-2"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}>
+              <InfoHint position="left" duration={4000} repeatDelay={4000} 
+                isHovered={isHovered}/>
+            </div>
+            <InfoButton noteFile="queue.md" title="Queue" />
+          </div>
       <h2 className="text-2xl font-bold mb-4">Queue (FIFO)</h2>
       
       {/* Queue Visualization */}
