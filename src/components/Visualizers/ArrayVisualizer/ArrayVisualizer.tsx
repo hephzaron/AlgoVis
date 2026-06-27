@@ -17,6 +17,7 @@ import {
   getIndexStatus,
   type ArrayVisualizationConfig,
 } from './ArrayVisualizerOptimizer';
+import { InfoHint } from '../../Info/InfoHint';
 import { InfoButton } from '../../Info/InfoButton';
 
 /**
@@ -64,6 +65,7 @@ export default function ArrayVisualizer() {
   const [currentPage, setCurrentPage] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const indexRef = useRef<HTMLInputElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Update display
   const updateDisplay = useCallback(() => {
@@ -370,7 +372,13 @@ export default function ArrayVisualizer() {
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">📊 Array</h2>
+        <div 
+          className="flex items-center gap-2"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <InfoHint position="left" duration={4000} repeatDelay={4000} 
+            isHovered={isHovered}/>
+        </div>
         <InfoButton noteFile="array.md" title="Array" />
       </div>
       <h2 className="text-2xl font-bold mb-4">

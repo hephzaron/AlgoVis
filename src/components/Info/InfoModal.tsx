@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 
-import { X } from 'lucide-react';
+import { CheckCircle, X } from 'lucide-react';
 import { loadMarkdown } from './MarkdownLoader';
 
 interface InfoModalProps {
@@ -53,9 +53,6 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-900">
-            📚 {title}
-          </h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
@@ -71,11 +68,21 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw]}>
-              {content}
-            </ReactMarkdown>
+            <div className="prose prose-slate max-w-none">
+              <ReactMarkdown
+                components={{
+                    img: ({ node, ...props }) => (
+                      <img
+                        {...props}
+                        className="inline-block align-middle mr-2"
+                      />
+                    ),
+                  }}
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}>
+                {content}
+              </ReactMarkdown>
+            </div>
           )}
         </div>
 
@@ -83,9 +90,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl transition-colors"
-          >
-            Got it! 👍
+            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl transition-colors">
+            <div className="flex items-center gap-2">
+              <CheckCircle size={18} />
+              Got it!
+            </div>
           </button>
         </div>
       </div>

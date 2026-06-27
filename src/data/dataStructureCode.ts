@@ -91,8 +91,7 @@ export const dataStructureCode: Record<DataStructure, string> = {
             for i in range(self.length - 1):
                 for j in range(self.length - 1 - i):
                     if self.data[j] > self.data[j + 1]:
-                        self.data[j], self.data[j + 1] = \
-                            self.data[j + 1], self.data[j]
+                        self.data[j], self.data[j + 1] = self.data[j + 1], self.data[j]
         
         def reverse(self):
             for i in range(self.length // 2):
