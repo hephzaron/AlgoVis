@@ -1,29 +1,139 @@
 import { DataStructure } from '../types';
 
 export const dataStructureCode: Record<DataStructure, string> = {
-  stack: `class Stack:
-    def __init__(self):
-        self._items = []
+    array: `
+    class Array:
+        def __init__(self, initial_capacity=10):
+            self.data = [None] * initial_capacity
+            self.capacity = initial_capacity
+            self.length = 0
+        
+        def _resize(self, new_capacity):
+            new_data = [None] * new_capacity
+            for i in range(self.length):
+                new_data[i] = self.data[i]
+            self.data = new_data
+            self.capacity = new_capacity
+        
+        def push(self, value):
+            if self.length == self.capacity:
+                self._resize(self.capacity * 2)
+            
+            self.data[self.length] = value
+            self.length += 1
+            return self.length - 1
+        
+        def pop(self):
+            if self.length == 0:
+                return None
+            
+            self.length -= 1
+            value = self.data[self.length]
+            self.data[self.length] = None
+            
+            # Shrink if too sparse
+            if self.length > 0 and self.length == self.capacity // 4:
+                self._resize(self.capacity // 2)
+            
+            return value
+        
+        def insert_at(self, value, index):
+            if index < 0 or index > self.length:
+                return False
+            
+            if self.length == self.capacity:
+                self._resize(self.capacity * 2)
+            
+            # Shift elements to the right
+            for i in range(self.length, index, -1):
+                self.data[i] = self.data[i - 1]
+            
+            self.data[index] = value
+            self.length += 1
+            return True
+        
+        def remove_at(self, index):
+            if index < 0 or index >= self.length:
+                return None
+            
+            value = self.data[index]
+            
+            # Shift elements to the left
+            for i in range(index, self.length - 1):
+                self.data[i] = self.data[i + 1]
+            
+            self.length -= 1
+            self.data[self.length] = None
+            
+            # Shrink if too sparse
+            if self.length > 0 and self.length == self.capacity // 4:
+                self._resize(self.capacity // 2)
+            
+            return value
+        
+        def get(self, index):
+            if index < 0 or index >= self.length:
+                return None
+            return self.data[index]
+        
+        def set(self, index, value):
+            if index < 0 or index >= self.length:
+                return False
+            self.data[index] = value
+            return True
+        
+        def clear(self):
+            self.data = [None] * self.capacity
+            self.length = 0
+        
+        def sort(self):
+            # Simple bubble sort for visualization
+            for i in range(self.length - 1):
+                for j in range(self.length - 1 - i):
+                    if self.data[j] > self.data[j + 1]:
+                        self.data[j], self.data[j + 1] = \
+                            self.data[j + 1], self.data[j]
+        
+        def reverse(self):
+            for i in range(self.length // 2):
+                j = self.length - 1 - i
+                self.data[i], self.data[j] = self.data[j], self.data[i]
+        
+        def size(self):
+            return self.length
+        
+        def get_capacity(self):
+            return self.capacity
+        
+        def is_empty(self):
+            return self.length == 0
+        
+        def get_items(self):
+            return self.data[:self.length]
+    `.trim(),
+    stack: `class Stack:
+        def __init__(self):
+            self._items = []
 
-    def push(self, value):
-        self._items.append(value)
+        def push(self, value):
+            self._items.append(value)
 
-    def pop(self):
-        if not self._items:
-            return None
-        return self._items.pop()
+        def pop(self):
+            if not self._items:
+                return None
+            return self._items.pop()
 
-    def peek(self):
-        if not self._items:
-            return None
-        return self._items[-1]
+        def peek(self):
+            if not self._items:
+                return None
+            return self._items[-1]
 
-    def is_empty(self):
-        return len(self._items) == 0
+        def is_empty(self):
+            return len(self._items) == 0
 
-    def size(self):
-        return len(self._items)
-`,
+        def size(self):
+            return len(self._items)
+    `,
 
   queue: `class Queue:
     def __init__(self):

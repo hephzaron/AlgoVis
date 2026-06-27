@@ -13,6 +13,7 @@ import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
 import HashTableVisualizer from './components/Visualizers/HashTableVisualizer.tsx';
 import LinkedListVisualizer from './components/Visualizers/LinkedListViewer.tsx';
+import ArrayVisualizer from './components/Visualizers/ArrayVisualizer';
 import GraphVisualizer from './components/Visualizers/GraphVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HeapVisualizer from './components/Visualizers/HeapVisualizer';
@@ -58,6 +59,8 @@ function App() {
         return <SearchingVisualizer algorithm={activeAlgorithm as SearchingAlgorithm} />;
       case 'structures':
         switch (activeAlgorithm) {
+          case 'array':
+            return <ArrayVisualizer />;
           case 'stack':
             return <StackVisualizer />;
           case 'queue':

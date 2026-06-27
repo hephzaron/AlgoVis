@@ -40,6 +40,7 @@ const modules = [
     name: 'Data Structures',
     icon: Database,
     algorithms: [
+      { id: 'array', name: 'Array', complexity: 'O(1)' },
       { id: 'stack', name: 'Stack', complexity: 'O(1)' },
       { id: 'queue', name: 'Queue', complexity: 'O(1)' },
       { id: 'bst', name: 'Binary Search Tree', complexity: 'O(log n)' },
