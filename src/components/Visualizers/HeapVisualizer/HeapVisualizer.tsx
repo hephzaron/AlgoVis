@@ -14,6 +14,8 @@ import {
   getNodeLevel,
   type TreeVisualizationConfig,
 } from './HeapViewOptimizer';
+import { InfoHint } from '../../Info/InfoHint';
+import { InfoButton } from '../../Info/InfoButton';
 
 /**
  * Helper to find the line numbers for a function in the heap code
@@ -70,6 +72,7 @@ export default function HeapVisualizer() {
   const [activeLines, setActiveLines] = useState<number[]>([]);
   const [animatingNode, setAnimatingNode] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Update display
   const updateDisplay = useCallback(() => {
@@ -317,6 +320,16 @@ export default function HeapVisualizer() {
 
   return (
     <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <div 
+              className="flex items-center gap-2"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}>
+              <InfoHint position="left" duration={4000} repeatDelay={4000} 
+                isHovered={isHovered}/>
+            </div>
+            <InfoButton noteFile="heap.md" title="Heap" />
+          </div>
       <h2 className="text-2xl font-bold mb-4">
         Heap Data Structure
         <span className="ml-4 text-sm font-normal text-slate-500">
