@@ -7,6 +7,8 @@ import { BSTControls } from './BSTControls';
 import { BSTSearchResult } from './BSTSearchResult';
 import { getFunctionLines } from './constants';
 import { BSTVisualizerProps } from './types';
+import { InfoHint } from '../../Info/InfoHint';
+import { InfoButton } from '../../Info/InfoButton';
 
 /**
  * Visual component for interacting with a Binary Search Tree.
@@ -37,6 +39,7 @@ export default function BSTVisualizer({
   const [viewBox, setViewBox] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   /**
    * Recomputes the SVG layout positions for the current tree.
@@ -176,6 +179,16 @@ export default function BSTVisualizer({
 
   return (
     <div className={`card ${className}`}>
+      <div className="flex items-center justify-between mb-4">
+          <div 
+            className="flex items-center gap-2"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}>
+            <InfoHint position="left" duration={4000} repeatDelay={4000} 
+              isHovered={isHovered}/>
+          </div>
+          <InfoButton noteFile="bst.md" title="Binary Search Tree" />
+        </div>
       <h2 className="text-2xl font-bold mb-4">Binary Search Tree</h2>
       
       <BSTControls
