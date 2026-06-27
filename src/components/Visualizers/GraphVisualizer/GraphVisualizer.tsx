@@ -10,6 +10,8 @@ import { NodeTooltip } from './NodeTooltip';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { defaultLayoutConfig, getFunctionLines } from './constants';
 import { GraphVisualizerProps, NumberNode, Edge, GraphStats as GraphStatsType } from './types';
+import { InfoHint } from '../../Info/InfoHint';
+import { InfoButton } from '../../Info/InfoButton';
 
 export default function GraphVisualizer({ 
   initialNodes = [],
@@ -56,6 +58,7 @@ export default function GraphVisualizer({
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [activeLines, setActiveLines] = useState<number[]>([]);
   const [stats, setStats] = useState<GraphStatsType | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   // Slider value: 0 = closest, 50 = default, 100 = farthest
   const [layoutSpread, setLayoutSpread] = useState(50);
@@ -326,8 +329,17 @@ export default function GraphVisualizer({
 
   return (
     <div className={`card ${className}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div 
+          className="flex items-center gap-2"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <InfoHint position="left" duration={4000} repeatDelay={4000} 
+            isHovered={isHovered}/>
+        </div>
+        <InfoButton noteFile="graph.md" title="Graph" />
+      </div>
       <h2 className="text-2xl font-bold mb-4">Graph (Force-Directed Layout)</h2>
-
       <GraphCanvas
         nodes={nodes}
         edges={edges}
