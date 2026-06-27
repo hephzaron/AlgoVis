@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Trash2, Eye } from 'lucide-react';
 import CodePanel from '../UI/CodePanel';
 import { dataStructureCode } from '../../data/dataStructureCode';
+import { InfoHint } from '../Info/InfoHint';
+import { InfoButton } from '../Info/InfoButton';
 
 /**
  * Represents a single node in a Linked List.
@@ -239,6 +241,7 @@ export default function LinkedListVisualizer() {
   const [activeLines, setActiveLines] = useState<number[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const indexRef = useRef<HTMLInputElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const updateDisplay = useCallback(() => {
     setItems(list.getItems());
@@ -372,6 +375,16 @@ export default function LinkedListVisualizer() {
 
   return (
     <div className="card">
+      <div className="flex items-center justify-between mb-4">
+        <div 
+          className="flex items-center gap-2"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <InfoHint position="left" duration={4000} repeatDelay={4000} 
+            isHovered={isHovered}/>
+        </div>
+        <InfoButton noteFile="linkedList.md" title="Singly Linked List" />
+      </div>
       <h2 className="text-2xl font-bold mb-4">Singly Linked List</h2>
 
       {/* List Visualization */}
