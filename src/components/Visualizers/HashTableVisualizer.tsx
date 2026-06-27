@@ -2,6 +2,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { Plus, Trash2, Search, RotateCcw } from 'lucide-react';
 import CodePanel from '../UI/CodePanel';
 import { dataStructureCode } from '../../data/dataStructureCode';
+import { InfoHint } from '../Info/InfoHint';
+import { InfoButton } from '../Info/InfoButton';
 
 /**
  * Represents a key-value pair entry in a hash table bucket.
@@ -257,6 +259,7 @@ function HashTableVisualizer() {
   const updateDisplay = useCallback(() => {
     setEntries(hashTable.getEntries());
   }, [hashTable]);
+  const [isHovered, setIsHovered] = useState(false);
 
   /**
    * Auto-focus the key input field when the component mounts.
@@ -425,6 +428,16 @@ function HashTableVisualizer() {
 
   return (
     <div className="card">
+      <div className="flex items-center justify-between mb-4">
+        <div 
+          className="flex items-center gap-2"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <InfoHint position="left" duration={4000} repeatDelay={4000} 
+            isHovered={isHovered}/>
+        </div>
+        <InfoButton noteFile="hash.md" title="Hash Table" />
+      </div>
       <h2 className="text-2xl font-bold mb-4">Hash Table</h2>
 
       {/* Controls Section */}
