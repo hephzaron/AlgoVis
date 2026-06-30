@@ -18,3 +18,21 @@ export function generateRandomArray(length: number, maxValue = 99) {
 export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
+
+/**
+ * Helper to find the line numbers for a function in the queue code.
+ */
+export function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
+  const lines = code.split('\n');
+  const result: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`def ${fnName}(`)) {
+      result.push(i + 1);
+      for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
+        if (lines[i + j].trim() !== '') result.push(i + j + 1);
+      }
+      break;
+    }
+  }
+  return result;
+}

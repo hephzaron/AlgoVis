@@ -9,7 +9,6 @@ import Sidebar from './components/Layout/Sidebar';
 import SortingVisualizer from './components/Visualizers/SortingVisualizer';
 import SearchingVisualizer from './components/Visualizers/SearchingVisualizer.tsx';
 import StackVisualizer from './components/Visualizers/StackVisualizer';
-import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import HuffmanVisualizer from './components/Visualizers/HuffmanVisualizer';
 import HashTableVisualizer from './components/Visualizers/HashTableVisualizer.tsx';
 import LinkedListVisualizer from './components/Visualizers/LinkedListViewer.tsx';
@@ -17,6 +16,7 @@ import ArrayVisualizer from './components/Visualizers/ArrayVisualizer';
 import GraphVisualizer from './components/Visualizers/GraphVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HeapVisualizer from './components/Visualizers/HeapVisualizer';
+import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
