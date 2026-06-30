@@ -10,8 +10,7 @@ export function QueueHeader() {
       <div 
         className="flex items-center gap-2"
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+        onMouseLeave={() => setIsHovered(false)}>
         <InfoHint position="left" duration={4000} repeatDelay={4000} isHovered={isHovered} />
       </div>
       <InfoButton noteFile="queue.md" title="Queue" />

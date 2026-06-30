@@ -1,10 +1,10 @@
 import { 
   Graph, 
   GraphNodeInterface, 
-  GraphInterface } from "../../../components/Visualizers/GraphVisualizer";
+  GraphInterface } from '../../../components/Visualizers/GraphVisualizer';
 
-import { PriorityQueue } from "./PriorityQueue";
-import { DijkstraResult, DijkstraStep } from "./types";
+import { Queue } from '../../../components/Visualizers/QueueVisualizer';
+import { DijkstraResult, DijkstraStep } from './types';
 
 /**
  * Dijkstra shortest path algorithm.

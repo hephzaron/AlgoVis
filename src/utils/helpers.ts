@@ -20,7 +20,7 @@ export function clamp(value: number, min: number, max: number) {
 }
 
 /**
- * Helper to find the line numbers for a function in the queue code.
+ * Helper to find the line numbers for a function in a code.
  */
 export function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
   const lines = code.split('\n');
