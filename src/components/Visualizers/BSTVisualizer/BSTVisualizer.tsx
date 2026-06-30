@@ -5,7 +5,7 @@ import { BinarySearchTree } from './BST';
 import { BSTCanvas } from './BSTCanvas';
 import { BSTControls } from './BSTControls';
 import { BSTSearchResult } from './BSTSearchResult';
-import { getFunctionLines } from './constants';
+import { getFunctionLines } from '../../../utils/helpers';
 import { BSTVisualizerProps } from './types';
 import { InfoHint } from '../../Info/InfoHint';
 import { InfoButton } from '../../Info/InfoButton';

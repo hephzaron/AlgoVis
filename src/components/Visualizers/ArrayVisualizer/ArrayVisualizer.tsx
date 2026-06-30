@@ -19,24 +19,7 @@ import {
 } from './ArrayVisualizerOptimizer';
 import { InfoHint } from '../../Info/InfoHint';
 import { InfoButton } from '../../Info/InfoButton';
-
-/**
- * Helper to find the line numbers for a function in the array code
- */
-function getFunctionLines(code: string, fnName: string, bodyLines = 1): number[] {
-  const lines = code.split('\n');
-  const result: number[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes(`def ${fnName}(`)) {
-      result.push(i + 1);
-      for (let j = 1; j <= bodyLines && i + j < lines.length; j++) {
-        if (lines[i + j].trim() !== '') result.push(i + j + 1);
-      }
-      break;
-    }
-  }
-  return result;
-}
+import { getFunctionLines } from '../../../utils/helpers';
 
 /**
  * Visualization configuration
