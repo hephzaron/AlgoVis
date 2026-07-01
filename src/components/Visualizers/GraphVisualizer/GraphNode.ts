@@ -9,7 +9,10 @@ import { Position, GraphNodeInterface } from './types';
 export class GraphNode<T> implements GraphNodeInterface<T> {
   value: T;
   id: string;
-  neighbors: Map<string, GraphNodeInterface<T>> = new Map();
+  neighbors: Map<string, { 
+    node: GraphNodeInterface<T>;
+    weight: number;
+  }> = new Map();
   position: Position;
 
   /**
@@ -26,9 +29,16 @@ export class GraphNode<T> implements GraphNodeInterface<T> {
   /**
    * Adds a neighbor to this node.
    * @param {GraphNodeInterface<T>} node - The node to add as neighbor.
+   * @param {number} weight - Weight of the edge.
    */
-  addNeighbor(node: GraphNodeInterface<T>): void {
-    this.neighbors.set(node.id, node);
+  addNeighbor(
+    node: GraphNodeInterface<T>,
+    weight: number = 1
+  ): void {
+    this.neighbors.set(node.id, {
+      node,
+      weight
+    });
   }
 
   /**
@@ -50,11 +60,12 @@ export class GraphNode<T> implements GraphNodeInterface<T> {
   }
 
   /**
-   * Gets all neighbor IDs.
-   * @returns {string[]} Array of neighbor IDs.
+   * Gets all neighbor neighbouring nodesand edge weights.
+   * @returns Read-only ,map of neighbours.
    */
-  getNeighbors(): string[] {
-    return Array.from(this.neighbors.keys());
+  getNeighbors(): ReadonlyMap<string, { 
+    node: GraphNodeInterface<T>; weight: number }> {
+    return new Map(this.neighbors );
   }
 
   /**

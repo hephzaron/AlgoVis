@@ -11,13 +11,11 @@ import { DijkstraResult, DijkstraStep } from './types';
  *
  * Computes the shortest distance from a source node to every
  * other node in a weighted graph with non-negative edge weights.
- *
- * This class contains NO rendering logic.
  */
 export class Dijkstra<T> {
   private readonly graph: Graph<T>;
 
-  private readonly queue = new PriorityQueue<string>();
+  private readonly queue = new Queue<string>();
 
   private readonly distances = new Map<string, number>();
 

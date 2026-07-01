@@ -59,15 +59,16 @@ export class Graph<T> implements GraphInterface<T> {
    * Adds an edge between two nodes.
    * @param {string} fromId - The source node ID.
    * @param {string} toId - The target node ID.
+   * @param {number} weight - Weight of the edge (default = 1).
    * @returns {boolean} True if edge was added.
    */
-  addEdge(fromId: string, toId: string): boolean {
+  addEdge(fromId: string, toId: string, weight: number = 1): boolean {
     const fromNode = this.nodes.get(fromId);
     const toNode = this.nodes.get(toId);
     if (!fromNode || !toNode) return false;
 
-    fromNode.addNeighbor(toNode);
-    toNode.addNeighbor(fromNode); // Undirected graph
+    fromNode.addNeighbor(toNode, weight);
+    toNode.addNeighbor(fromNode, weight); // Undirected graph
     return true;
   }
 
@@ -114,10 +115,13 @@ export class Graph<T> implements GraphInterface<T> {
     const seen = new Set<string>();
 
     for (const [id, node] of this.nodes) {
-      for (const neighborId of node.getNeighbors()) {
+      for (const [neighborId, neighbor] of node.getNeighbors()) {
         const key = [id, neighborId].sort().join('-');
         if (!seen.has(key)) {
-          edges.push({ from: id, to: neighborId });
+          edges.push({ 
+            from: id, 
+            to: neighborId, 
+            weight: neighbor.weight });
           seen.add(key);
         }
       }
@@ -162,7 +166,7 @@ export class Graph<T> implements GraphInterface<T> {
           visited.add(currentId);
           const currentNode = this.nodes.get(currentId);
           if (currentNode) {
-            for (const neighborId of currentNode.getNeighbors()) {
+            for (const [neighborId] of currentNode.getNeighbors()) {
               if (!visited.has(neighborId)) {
                 queue.push(neighborId);
               }

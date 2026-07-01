@@ -12,6 +12,7 @@ export interface Position {
 export interface Edge {
   from: string;
   to: string;
+  weight: number;
 }
 
 /**
@@ -25,18 +26,20 @@ export interface Edge {
  * @property {(node: GraphNodeInterface<T>) => void} addNeighbor - Add a neighbor
  * @property {(nodeId: string) => boolean} removeNeighbor - Remove a neighbor
  * @property {(nodeId: string) => boolean} hasNeighbor - Check if neighbor exists
- * @property {() => string[]} getNeighbors - Get all neighbor IDs
+ * @property {() => ReadonlyMap<string, { node: GraphNodeInterface<T>; weight: number }>} getNeighbors - Get all neighbors and their weights
  * @property {() => number} getDegree - Get the degree of the node
  */
 export interface GraphNodeInterface<T> {
   value: T;
   id: string;
   position: Position;
-  neighbors: Map<string, GraphNodeInterface<T>>;
-  addNeighbor(node: GraphNodeInterface<T>): void;
+  neighbors: Map<string, { 
+    node: GraphNodeInterface<T>;
+    weight: number;}>;
+  addNeighbor(node: GraphNodeInterface<T>, weight?: number): void;
   removeNeighbor(nodeId: string): boolean;
   hasNeighbor(nodeId: string): boolean;
-  getNeighbors(): string[];
+  getNeighbors(): ReadonlyMap<string, { node: GraphNodeInterface<T>; weight: number }>;
   getDegree(): number;
 }
 
