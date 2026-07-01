@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Dijkstra } from '../../algorithms/graph/Dijkstra/Dijkstra';
-import { DijkstraStep } from '../../algorithms/graph/Dijkstra/types';
+import { BFS } from '../../algorithms/graph/BFS/BFS';
+import { BFSStep } from '../../algorithms/graph/BFS/types';
 import { Graph } from './GraphVisualizer/Graph';
 import { Play, Pause, RotateCcw, StepForward } from 'lucide-react';
 
@@ -14,40 +14,39 @@ interface NodePosition {
 }
 
 /**
- * DijkstraVisualizer Component
+ * BFSVisualizer Component
  * 
- * Provides interactive step-by-step visualization of Dijkstra's shortest path algorithm.
+ * Provides interactive step-by-step visualization of Breadth-First Search algorithm.
  * Features include:
  * - Graph rendering with node highlighting
- * - Distance tracking table
+ * - Level-by-level exploration visualization
+ * - Queue state tracking
  * - Step-by-step animation playback
  * - Speed control
  * - Manual step navigation
+ * - Path highlighting on node click
  */
-export default function DijkstraVisualizer() {
+export default function BFSVisualizer() {
   // ============================================================================
   // State Management
   // ============================================================================
 
   /** The graph instance for algorithm execution */
   const [graph] = useState(() => {
-    // Create a sample weighted graph for demonstration
+    // Create a sample graph for demonstration
     const g = new Graph<string>();
 
     // Add nodes
-    const nodes = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
     nodes.forEach(id => g.addNode(id, id));
 
-    // Add weighted edges (creating a connected graph with interesting paths)
-    g.addEdge('A', 'B', 4);
-    g.addEdge('A', 'C', 2);
-    g.addEdge('B', 'C', 1);
-    g.addEdge('B', 'D', 5);
-    g.addEdge('C', 'D', 8);
-    g.addEdge('C', 'E', 10);
-    g.addEdge('D', 'E', 2);
-    g.addEdge('D', 'F', 6);
-    g.addEdge('E', 'F', 3);
+    // Add edges to create an interesting BFS tree
+    g.addEdge('A', 'B', 1);
+    g.addEdge('A', 'C', 1);
+    g.addEdge('B', 'D', 1);
+    g.addEdge('B', 'E', 1);
+    g.addEdge('C', 'F', 1);
+    g.addEdge('E', 'G', 1);
 
     return g;
   });
@@ -57,9 +56,9 @@ export default function DijkstraVisualizer() {
     const positions = new Map<string, NodePosition>();
     const nodes = Array.from(graph.getNodes());
     const angle = (2 * Math.PI) / nodes.length;
-    const radius = 120;
-    const centerX = 250;
-    const centerY = 200;
+    const radius = 130;
+    const centerX = 260;
+    const centerY = 210;
 
     nodes.forEach((node, index) => {
       positions.set(node.id, {
@@ -72,7 +71,7 @@ export default function DijkstraVisualizer() {
   }, [graph]);
 
   /** Algorithm execution steps */
-  const [steps, setSteps] = useState<DijkstraStep[]>([]);
+  const [steps, setSteps] = useState<BFSStep[]>([]);
 
   /** Current step being displayed */
   const [currentStep, setCurrentStep] = useState(0);
@@ -89,20 +88,20 @@ export default function DijkstraVisualizer() {
   /** Whether the algorithm has been run */
   const [hasRun, setHasRun] = useState(false);
 
-  /** Selected node to display shortest path */
+  /** Selected node to display path */
   const [selectedPathNode, setSelectedPathNode] = useState<string | null>(null);
 
-  /** Final previous map for path reconstruction (after algorithm completes) */
-  const [finalPrevious, setFinalPrevious] = useState<Map<string, string | null>>(new Map());
+  /** Final parent map for path reconstruction */
+  const [finalParent, setFinalParent] = useState<Map<string, string | null>>(new Map());
 
   // ============================================================================
   // Algorithm Execution
   // ============================================================================
 
   /**
-   * Executes Dijkstra's algorithm from the selected source node
+   * Executes BFS algorithm from the selected source node
    */
-  const runDijkstra = useCallback(() => {
+  const runBFS = useCallback(() => {
     const node = graph.getNode(sourceNode);
     if (!node) {
       alert('Invalid source node');
@@ -110,20 +109,20 @@ export default function DijkstraVisualizer() {
     }
 
     // Execute algorithm
-    const dijkstra = new Dijkstra(graph);
-    const result = dijkstra.run(sourceNode);
+    const bfs = new BFS(graph);
+    const result = bfs.run(sourceNode);
 
     // Store steps and reset visualization
     setSteps(result.steps);
     setCurrentStep(0);
     setIsPlaying(false);
     setHasRun(true);
-    setFinalPrevious(result.previous);
+    setFinalParent(result.parent);
     setSelectedPathNode(null);
   }, [graph, sourceNode]);
 
   /**
-   * Reconstructs the shortest path from source to a target node
+   * Reconstructs the path from source to a target node
    */
   const reconstructPath = (targetNode: string): string[] => {
     const path: string[] = [];
@@ -131,7 +130,7 @@ export default function DijkstraVisualizer() {
 
     while (current !== null) {
       path.unshift(current);
-      current = finalPrevious.get(current) || null;
+      current = finalParent.get(current) || null;
     }
 
     return path;
@@ -168,32 +167,29 @@ export default function DijkstraVisualizer() {
   /** Get current step data */
   const currentStepData = steps[currentStep];
 
-  /** Current distances from source to all nodes */
-  const distances = currentStepData?.distances || new Map<string, number>();
+  /** Nodes that have been visited */
+  const visited = currentStepData?.visited || [];
 
-  /** Nodes that have been visited (processed) */
-  const visited = currentStepData?.visited || new Set<string>();
+  /** Current queue contents */
+  const queue = currentStepData?.queue || [];
 
   /** Currently processing node */
   const currentNode = currentStepData?.current;
 
-  /** Edge being examined (current -> neighbor) */
-  const examiningEdge = currentStepData?.neighbor
-    ? { from: currentStepData.current, to: currentStepData.neighbor }
-    : null;
+  /** Node being discovered */
+  const discoveringNode = currentStepData?.discovered;
 
   /** Step type description */
   const stepTypeDescriptions: Record<string, string> = {
-    start: 'Initializing algorithm with source node',
-    visit: 'Processing node - extracting from priority queue',
-    relax: 'Examining edge to neighbor node',
-    update: 'Found shorter path - updating distance',
-    complete: 'Algorithm complete - all shortest paths found',
+    start: 'Starting BFS from source node',
+    visit: 'Processing node from the queue',
+    discover: 'Discovering unvisited neighbor and adding to queue',
+    complete: 'BFS complete - all reachable nodes explored',
   };
 
   const stepDescription = stepTypeDescriptions[currentStepData?.type || 'start'];
 
-  /** Get highlighted path nodes and edges when a node is selected */
+  /** Get highlighted path nodes and edges */
   const highlightedPath = selectedPathNode ? reconstructPath(selectedPathNode) : [];
   const pathNodeSet = new Set(highlightedPath);
   const pathEdgeSet = new Set<string>();
@@ -201,8 +197,11 @@ export default function DijkstraVisualizer() {
     const from = highlightedPath[i];
     const to = highlightedPath[i + 1];
     pathEdgeSet.add(`${from}-${to}`);
-    pathEdgeSet.add(`${to}-${from}`); // For undirected graph
+    pathEdgeSet.add(`${to}-${from}`);
   }
+
+  const visitedSet = new Set(visited);
+  const queueSet = new Set(queue);
 
   // ============================================================================
   // Render
@@ -213,9 +212,9 @@ export default function DijkstraVisualizer() {
       {/* ========== Header ========== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Dijkstra's Shortest Path</h2>
+          <h2 className="text-2xl font-bold text-white">Breadth-First Search (BFS)</h2>
           <p className="text-sm text-slate-400 mt-1">
-            Find shortest paths from source to all nodes in a weighted graph
+            Explore graph level-by-level from source to all reachable nodes
           </p>
         </div>
 
@@ -239,11 +238,11 @@ export default function DijkstraVisualizer() {
           </select>
 
           <button
-            onClick={runDijkstra}
+            onClick={runBFS}
             disabled={isPlaying}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors"
           >
-            Run Algorithm
+            Run BFS
           </button>
         </div>
       </div>
@@ -252,13 +251,13 @@ export default function DijkstraVisualizer() {
       {!hasRun ? (
         <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-12 text-center">
           <p className="text-slate-400 mb-4">
-            Select a source node and click "Run Algorithm" to begin visualization
+            Select a source node and click "Run BFS" to begin visualization
           </p>
           <button
-            onClick={runDijkstra}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            onClick={runBFS}
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
           >
-            Start Dijkstra's Algorithm
+            Start BFS Algorithm
           </button>
         </div>
       ) : (
@@ -280,22 +279,23 @@ export default function DijkstraVisualizer() {
                   const fromPos = nodePositions.get(node.id)!;
                   return Array.from(node.getNeighbors()).map(([, edge]) => {
                     const toPos = nodePositions.get(edge.node.id)!;
-                    const isExamining =
-                      examiningEdge &&
-                      ((examiningEdge.from === node.id &&
-                        examiningEdge.to === edge.node.id) ||
-                        (examiningEdge.from === edge.node.id &&
-                          examiningEdge.to === node.id));
+
+                    const isDiscovering =
+                      currentStepData?.type === 'discover' &&
+                      ((currentStepData.current === node.id &&
+                        currentStepData.discovered === edge.node.id) ||
+                        (currentStepData.current === edge.node.id &&
+                          currentStepData.discovered === node.id));
 
                     const isPartOfPath =
                       pathEdgeSet.has(`${node.id}-${edge.node.id}`) ||
                       pathEdgeSet.has(`${edge.node.id}-${node.id}`);
 
-                    let edgeColor = '#64748b'; // gray - normal
+                    let edgeColor = '#94a3b8'; // gray - normal
                     let edgeWidth = 2;
 
-                    if (isExamining) {
-                      edgeColor = '#fbbf24'; // yellow - examining
+                    if (isDiscovering) {
+                      edgeColor = '#a78bfa'; // purple - discovering
                       edgeWidth = 3;
                     } else if (isPartOfPath) {
                       edgeColor = '#06b6d4'; // cyan - path
@@ -304,7 +304,6 @@ export default function DijkstraVisualizer() {
 
                     return (
                       <g key={`edge-${node.id}-${edge.node.id}`}>
-                        {/* Edge line */}
                         <motion.line
                           x1={fromPos.x}
                           y1={fromPos.y}
@@ -318,19 +317,6 @@ export default function DijkstraVisualizer() {
                           }}
                           transition={{ duration: 0.3 }}
                         />
-
-                        {/* Edge weight label */}
-                        <text
-                          x={(fromPos.x + toPos.x) / 2}
-                          y={(fromPos.y + toPos.y) / 2 - 8}
-                          textAnchor="middle"
-                          fill="#94a3b8"
-                          fontSize="12"
-                          fontWeight="bold"
-                          className="pointer-events-none"
-                        >
-                          {edge.weight}
-                        </text>
                       </g>
                     );
                   });
@@ -341,8 +327,10 @@ export default function DijkstraVisualizer() {
                   {Array.from(graph.getNodes()).map(node => {
                     const pos = nodePositions.get(node.id)!;
                     const isSource = node.id === sourceNode;
-                    const isVisited = visited.has(node.id);
+                    const isVisited = visitedSet.has(node.id);
+                    const isInQueue = queueSet.has(node.id);
                     const isCurrent = node.id === currentNode;
+                    const isDiscovering = node.id === discoveringNode;
                     const isPartOfPath = pathNodeSet.has(node.id);
 
                     // Color coding
@@ -357,8 +345,13 @@ export default function DijkstraVisualizer() {
                     } else if (isSource) {
                       nodeColor = '#3b82f6'; // blue - source
                     } else if (isCurrent) {
-                      nodeColor = '#fbbf24'; // yellow - current
-                      ringColor = '#fbbf24';
+                      nodeColor = '#8b5cf6'; // purple - current
+                      ringColor = '#8b5cf6';
+                    } else if (isDiscovering) {
+                      nodeColor = '#a78bfa'; // light purple - discovering
+                      ringColor = '#a78bfa';
+                    } else if (isInQueue) {
+                      nodeColor = '#6366f1'; // indigo - in queue
                     } else if (isVisited) {
                       nodeColor = '#10b981'; // green - visited
                     }
@@ -369,8 +362,8 @@ export default function DijkstraVisualizer() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                       >
-                        {/* Outer ring for current node or selected path destination */}
-                        {(isCurrent || (node.id === selectedPathNode && selectedPathNode)) && (
+                        {/* Outer ring */}
+                        {(isCurrent || isDiscovering || (node.id === selectedPathNode && selectedPathNode)) && (
                           <motion.circle
                             cx={pos.x}
                             cy={pos.y}
@@ -424,8 +417,12 @@ export default function DijkstraVisualizer() {
                   <span className="text-slate-400">Source</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-yellow-500" />
+                  <div className="w-4 h-4 rounded-full bg-purple-500" />
                   <span className="text-slate-400">Current</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-indigo-500" />
+                  <span className="text-slate-400">In Queue</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-green-500" />
@@ -434,10 +431,6 @@ export default function DijkstraVisualizer() {
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-cyan-500" />
                   <span className="text-slate-400">Path</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-slate-500" />
-                  <span className="text-slate-400">Unvisited</span>
                 </div>
               </div>
             </div>
@@ -469,84 +462,69 @@ export default function DijkstraVisualizer() {
                     </div>
                   </div>
                 )}
-                {currentStepData?.neighbor && (
+                {currentStepData?.discovered && (
                   <div>
-                    <span className="text-slate-500">Neighbor:</span>
+                    <span className="text-slate-500">Discovered:</span>
                     <div className="mt-1 px-2 py-1 bg-slate-800 rounded text-slate-200 font-semibold">
-                      {currentStepData.neighbor}
-                    </div>
-                  </div>
-                )}
-                {currentStepData?.oldDistance !== undefined && (
-                  <div>
-                    <span className="text-slate-500">Distance Change:</span>
-                    <div className="mt-1 space-y-1 text-xs">
-                      <div className="text-red-400">
-                        Old: {currentStepData.oldDistance === Infinity ? '∞' : currentStepData.oldDistance}
-                      </div>
-                      <div className="text-green-400">
-                        New: {currentStepData.newDistance === Infinity ? '∞' : currentStepData.newDistance}
-                      </div>
+                      {currentStepData.discovered}
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Distances Table */}
+            {/* Queue Display */}
             <div className="bg-slate-950/60 rounded-xl border border-slate-800 p-4">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">Distances from {sourceNode}</h3>
-              <p className="text-xs text-slate-500 mb-2">Click a node to highlight its shortest path</p>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {Array.from(graph.getNodes()).map(node => {
-                  const dist = distances.get(node.id);
-                  const isVisitedNode = visited.has(node.id);
-                  const isSelectedPath = node.id === selectedPathNode;
-
-                  return (
-                    <div
-                      key={node.id}
-                      onClick={() => {
-                        // Toggle path selection
-                        setSelectedPathNode(isSelectedPath ? null : node.id);
-                      }}
-                      className={`px-3 py-2 rounded text-sm font-medium transition-all cursor-pointer ${
-                        isSelectedPath
-                          ? 'bg-cyan-900/50 text-cyan-300 ring-2 ring-cyan-500'
-                          : isVisitedNode
-                          ? 'bg-green-900/30 text-green-300 hover:bg-green-900/50'
-                          : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">{node.id}:</span>
-                        <span className="font-mono">
-                          {dist === Infinity ? '∞' : dist}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Visited Nodes */}
-            <div className="bg-slate-950/60 rounded-xl border border-slate-800 p-4">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">
-                Processed Nodes ({visited.size})
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {visited.size > 0 ? (
-                  Array.from(visited).map(nodeId => (
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">Queue (FIFO)</h3>
+              <div className="flex flex-wrap gap-2 min-h-[40px]">
+                {queue.length > 0 ? (
+                  queue.map((nodeId, idx) => (
                     <div
                       key={nodeId}
-                      className="px-2 py-1 bg-green-900/50 text-green-300 rounded text-sm font-semibold"
+                      className={`px-3 py-1 rounded text-sm font-semibold transition-colors ${
+                        idx === 0
+                          ? 'bg-purple-900/50 text-purple-300 ring-1 ring-purple-500'
+                          : 'bg-indigo-900/30 text-indigo-300'
+                      }`}
                     >
                       {nodeId}
+                      {idx === 0 && <span className="text-xs ml-1">← front</span>}
                     </div>
                   ))
                 ) : (
-                  <p className="text-slate-500 text-sm">No nodes processed yet</p>
+                  <p className="text-slate-500 text-sm">Queue is empty</p>
+                )}
+              </div>
+            </div>
+
+            {/* Visit Order */}
+            <div className="bg-slate-950/60 rounded-xl border border-slate-800 p-4">
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">
+                Visited Nodes ({visited.length})
+              </h3>
+              <p className="text-xs text-slate-500 mb-2">Click a node to highlight path from source</p>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {visited.length > 0 ? (
+                  visited.map(nodeId => {
+                    const isSelectedPath = nodeId === selectedPathNode;
+                    return (
+                      <div
+                        key={nodeId}
+                        onClick={() => {
+                          setSelectedPathNode(isSelectedPath ? null : nodeId);
+                        }}
+                        className={`px-3 py-2 rounded text-sm font-medium transition-all cursor-pointer ${
+                          isSelectedPath
+                            ? 'bg-cyan-900/50 text-cyan-300 ring-2 ring-cyan-500'
+                            : 'bg-green-900/30 text-green-300 hover:bg-green-900/50'
+                        }`}
+                      >
+                        {nodeId}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-slate-500 text-sm">No nodes visited yet</p>
                 )}
               </div>
             </div>
@@ -567,7 +545,7 @@ export default function DijkstraVisualizer() {
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
               <motion.div
-                className="bg-blue-500 h-full transition-all"
+                className="bg-purple-500 h-full transition-all"
                 animate={{
                   width: `${((currentStep + 1) / steps.length) * 100}%`,
                 }}
@@ -623,7 +601,7 @@ export default function DijkstraVisualizer() {
               max="100"
               value={speed}
               onChange={(e) => setSpeed(parseInt(e.target.value))}
-              className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
             />
             <span className="text-xs text-slate-500 w-12 text-right">
               {Math.round((speed / 100) * 100)}%

@@ -51,11 +51,13 @@ const modules = [
     ]
   },
   {
-    id: 'graphs',
+    id: 'graphAlgorithms',
     name: 'Graph Algorithms',
     icon: Network,
     algorithms: [
       { id: 'dijkstra', name: "Dijkstra's", complexity: 'O(V²)' },
+      { id: 'bfs', name: 'Breadth-First Search', complexity: 'O(V+E)' },
+      { id: 'bst-bfs', name: 'BFS on BST', complexity: 'O(n)' },
     ]
   },
   {

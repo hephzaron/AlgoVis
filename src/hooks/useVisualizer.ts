@@ -3,7 +3,15 @@
  * Keeps track of the current data array, active highlights, and completion.
  */
 import { useState } from 'react';
-import type { VisualizerState } from '../types';
+
+/**
+ * State shape for a visualizer component
+ */
+interface VisualizerState {
+  data: number[];
+  activeIndices: number[];
+  completed: boolean;
+}
 
 export default function useVisualizer(initialData: number[]) {
   const [state, setState] = useState<VisualizerState>({

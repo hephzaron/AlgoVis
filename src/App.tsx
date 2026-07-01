@@ -18,6 +18,9 @@ import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HeapVisualizer from './components/Visualizers/HeapVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
+import DijkstraVisualizer from './components/Visualizers/DijkstraVisualizer.tsx';
+import BFSVisualizer from './components/Visualizers/BFSVisualizer.tsx';
+import BSTBFSVisualizer from './components/Visualizers/BSTBFSVisualizer.tsx';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,6 +45,9 @@ function App() {
         break;
       case 'compression':
         setActiveAlgorithm('huffman');
+        break;
+      case 'graphAlgorithms':
+        setActiveAlgorithm('dijkstra');
         break;
       default:
         setActiveAlgorithm('quick');
@@ -75,6 +81,17 @@ function App() {
             return <GraphVisualizer />;
           case 'heap':
             return <HeapVisualizer />;
+          default:
+            return <div className="card text-center py-20">Coming soon...</div>;
+        }
+      case 'graphAlgorithms':
+        switch (activeAlgorithm) {
+          case 'dijkstra':
+            return <DijkstraVisualizer />;
+          case 'bfs':
+            return <BFSVisualizer />;
+          case 'bst-bfs':
+            return <BSTBFSVisualizer />;
           default:
             return <div className="card text-center py-20">Coming soon...</div>;
         }

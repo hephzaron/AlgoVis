@@ -29,12 +29,19 @@ export type DataStructure = 'array'|'stack' | 'queue' | 'bst' | 'hash' |'linkedL
 /**
  * Supported graph algorithm visualizer names.
  */
-export type GraphAlgorithm = 'dijkstra';
+export type GraphAlgorithm = 'dijkstra' | 'bfs' | 'bst-bfs';
 
 /**
  * Supported compression algorithm identifiers.
  */
 export type CompressionAlgorithm = 'huffman';
+
+/**
+ * Union type representing all visualizer types in the application.
+ * This includes sorting algorithms, searching algorithms, data structures,
+ * graph algorithms, and compression algorithms.
+ */
+export type VisualizerType = SortingAlgorithm | SearchingAlgorithm | DataStructure | GraphAlgorithm | CompressionAlgorithm;
 
 /**
  * Animation lifecycle states used across visualizers.
@@ -88,3 +95,4 @@ export interface HashBucket {
   key: string;
   value: number;
 }
+
