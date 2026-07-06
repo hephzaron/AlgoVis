@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { useGraphData } from './hooks/useGraphData';
+import { useState, useCallback } from 'react';
+import { useGraphData, useAnimation } from '../CustomHooks';
 import { useDijkstra } from './hooks/useDijkstra';
 import { Header } from './components/Header';
 import { GraphCanvas } from './components/GraphCanvas';
@@ -24,8 +24,6 @@ export default function DijkstraVisualizer() {
     currentStep,
     setCurrentStep,
     hasRun,
-    setHasRun,
-    finalPrevious,
     sourceNode,
     setSourceNode,
     runAlgorithm,
@@ -86,21 +84,14 @@ export default function DijkstraVisualizer() {
     setIsPlaying(!isPlaying);
   }, [isPlaying, currentStep, steps.length, setCurrentStep]);
 
-  // Auto-advance animation
-  React.useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-
-    if (isPlaying && currentStep < steps.length - 1) {
-      const delayMs = 500 - (speed * 4.5);
-      timer = setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
-      }, delayMs);
-    } else if (currentStep >= steps.length - 1 && steps.length > 0) {
-      setIsPlaying(false);
-    }
-
-    return () => clearTimeout(timer);
-  }, [isPlaying, currentStep, steps.length, speed, setCurrentStep]);
+  useAnimation({
+    isPlaying,
+    currentStep,
+    totalSteps: steps.length,
+    speed,
+    onStepChange: setCurrentStep,
+    onComplete: () => setIsPlaying(false),
+  });
 
   return (
     <section className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl shadow-black/20 space-y-6">

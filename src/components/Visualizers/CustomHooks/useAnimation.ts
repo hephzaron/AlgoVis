@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 
-interface UseAnimationProps {
-  isPlaying: boolean;
-  currentStep: number;
-  totalSteps: number;
-  speed: number;
-  onStepChange: (step: number) => void;
-  onComplete: () => void;
-}
+import { UseAnimationProps } from '../types';
 
 export function useAnimation({
   isPlaying,
