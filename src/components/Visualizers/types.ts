@@ -135,3 +135,12 @@ export interface UseAnimationProps {
   onStepChange: (step: number) => void;
   onComplete: () => void;
 }
+
+export interface HeaderProps {
+  sourceNode: string;
+  onSourceChange: (value: string) => void;
+  onRun: () => void;
+  isPlaying: boolean;
+  nodes: GraphNode[];
+  hasRun: boolean;
+}

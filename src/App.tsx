@@ -19,7 +19,7 @@ import HeapVisualizer from './components/Visualizers/HeapVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
 import { SortingAlgorithm, SearchingAlgorithm } from './types';
 import DijkstraVisualizer from './components/Visualizers/DijkstraVisualizer';
-import BFSVisualizer from './components/Visualizers/BFSVisualizer.tsx';
+import BFSVisualizer from './components/Visualizers/BFSVisualizer';
 import BSTBFSVisualizer from './components/Visualizers/BSTBFSVisualizer.tsx';
 
 function App() {

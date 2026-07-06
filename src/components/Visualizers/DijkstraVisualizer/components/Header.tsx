@@ -1,13 +1,5 @@
-import { GraphNode } from '../type';
+import { HeaderProps } from '../../types'
 
-interface HeaderProps {
-  sourceNode: string;
-  onSourceChange: (value: string) => void;
-  onRun: () => void;
-  isPlaying: boolean;
-  nodes: GraphNode[];
-  hasRun: boolean;
-}
 
 export function Header({ 
   sourceNode, 

@@ -1,13 +1,5 @@
 import { DijkstraStep } from '../../../algorithms/graph/Dijkstra/types';
 
-export interface NodePosition {
-  x: number;
-  y: number;
-}
-
-export interface GraphNode {
-  id: string;
-}
 
 export interface DijkstraVisualizerState {
   steps: DijkstraStep[];
