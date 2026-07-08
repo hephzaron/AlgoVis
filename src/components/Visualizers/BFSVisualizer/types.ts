@@ -96,7 +96,7 @@ export interface BFSVisitedListProps {
   /** Currently selected node for path highlighting */
   selectedPathNode: string | null;
   /** Callback when a node is selected/deselected */
-  onNodeSelect: (nodeId: string | null) => void;
+  onNodeSelect: (nodeId: string ) => void;
 }
 
 /**

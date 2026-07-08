@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../types";
 
-export function Header({
+export function BFSHeader({
   sourceNode, 
   onSourceChange, 
   onRun, 
