@@ -103,7 +103,7 @@ export class BFS<T> {
       if (!currentNode) continue;
 
       // Phase 3: Process current node and discover neighbors
-      this.processNode(currentId, currentNode);
+      this.processNode(currentId);
 
       // Phase 4: Discover and enqueue unvisited neighbors
       this.discoverNeighbors(currentId, currentNode);
@@ -159,7 +159,7 @@ export class BFS<T> {
    * @param nodeId - The ID of the node being processed
    * @param node - The node object
    */
-  private processNode(nodeId: string, node: GraphNodeInterface<T>): void {
+  private processNode(nodeId: string ): void {
     // Record that this node is being visited
     this.visitOrder.push(nodeId);
 

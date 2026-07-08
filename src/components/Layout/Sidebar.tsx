@@ -58,6 +58,7 @@ const modules = [
       { id: 'dijkstra', name: "Dijkstra's", complexity: 'O(V²)' },
       { id: 'bfs', name: 'Breadth-First Search', complexity: 'O(V+E)' },
       { id: 'bst-bfs', name: 'BFS on BST', complexity: 'O(n)' },
+      { id: 'dfs', name: 'Depth-First Search', complexity: 'O(V+E)' },
     ]
   },
   {

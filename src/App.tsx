@@ -17,10 +17,11 @@ import GraphVisualizer from './components/Visualizers/GraphVisualizer';
 import BSTVisualizer from './components/Visualizers/BSTVisualizer';
 import HeapVisualizer from './components/Visualizers/HeapVisualizer';
 import QueueVisualizer from './components/Visualizers/QueueVisualizer';
-import { SortingAlgorithm, SearchingAlgorithm } from './types';
 import DijkstraVisualizer from './components/Visualizers/DijkstraVisualizer';
 import BFSVisualizer from './components/Visualizers/BFSVisualizer';
+import DFSVisualizer from './components/Visualizers/DFSVisualizer';
 import BSTBFSVisualizer from './components/Visualizers/BSTBFSVisualizer.tsx';
+import { SortingAlgorithm, SearchingAlgorithm } from './types';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -92,6 +93,8 @@ function App() {
             return <BFSVisualizer />;
           case 'bst-bfs':
             return <BSTBFSVisualizer />;
+          case 'dfs':
+            return <DFSVisualizer/>;
           default:
             return <div className="card text-center py-20">Coming soon...</div>;
         }

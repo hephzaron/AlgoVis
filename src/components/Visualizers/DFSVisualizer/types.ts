@@ -1,9 +1,9 @@
 /**
- * @fileoverview Type definitions for the BFS Visualizer component
+ * @fileoverview Type definitions for the DFS Visualizer component
  * Contains all interfaces and type declarations used across the module
  */
 
-import { BFSStep } from '../../../algorithms/graph/BFS/types';
+import { DFSStep } from '../../../algorithms/graph/DFS/types';
 
 /**
  * Represents the position of a node in the graph visualization
@@ -26,14 +26,14 @@ export interface GraphNode {
 }
 
 /**
- * Props for the BFSHeader component
+ * Props for the DFSHeader component
  */
-export interface BFSHeaderProps {
+export interface DFSHeaderProps {
   /** Currently selected source node */
   sourceNode: string;
   /** Callback when source node changes */
   onSourceChange: (value: string) => void;
-  /** Callback to run the BFS algorithm */
+  /** Callback to run the DFS algorithm */
   onRun: () => void;
   /** Whether animation is currently playing */
   isPlaying: boolean;
@@ -44,9 +44,9 @@ export interface BFSHeaderProps {
 }
 
 /**
- * Props for the BFSGraphCanvas component
+ * Props for the DFSGraphCanvas component
  */
-export interface BFSGraphCanvasProps {
+export interface DFSGraphCanvasProps {
   /** Graph instance containing nodes and edges */
   graph: any;
   /** Map of node IDs to their positions */
@@ -55,8 +55,8 @@ export interface BFSGraphCanvasProps {
   sourceNode: string;
   /** List of visited node IDs in order */
   visited: string[];
-  /** Current queue contents */
-  queue: string[];
+  /** Current stack contents */
+  stack: string[];
   /** Currently processing node (optional) */
   currentNode?: string;
   /** Node being discovered (optional) */
@@ -72,37 +72,37 @@ export interface BFSGraphCanvasProps {
 }
 
 /**
- * Props for the BFSInfoPanel component
+ * Props for the DFSInfoPanel component
  */
-export interface BFSInfoPanelProps {
+export interface DFSInfoPanelProps {
   /** Current step data from the algorithm */
-  stepData?: BFSStep;
+  stepData?: DFSStep;
 }
 
 /**
- * Props for the BFSQueueDisplay component
+ * Props for the DFSStackDisplay component
  */
-export interface BFSQueueDisplayProps {
-  /** Current queue contents */
-  queue: string[];
+export interface DFSStackDisplayProps {
+  /** Current stack contents */
+  stack: string[];
 }
 
 /**
- * Props for the BFSVisitedList component
+ * Props for the DFSVisitedList component
  */
-export interface BFSVisitedListProps {
+export interface DFSVisitedListProps {
   /** List of visited nodes in order */
   visited: string[];
   /** Currently selected node for path highlighting */
   selectedPathNode: string | null;
   /** Callback when a node is selected/deselected */
-  onNodeSelect: (nodeId: string | null) => void;
+  onNodeSelect: (nodeId: string | null ) => void;
 }
 
 /**
- * Props for the BFSControls component
+ * Props for the DFSControls component
  */
-export interface BFSControlsProps {
+export interface DFSControlsProps {
   /** Whether animation is playing */
   isPlaying: boolean;
   /** Callback to toggle play/pause */
@@ -124,17 +124,17 @@ export interface BFSControlsProps {
 }
 
 /**
- * Props for the BFSEmptyState component
+ * Props for the DFSEmptyState component
  */
-export interface BFSEmptyStateProps {
+export interface DFSEmptyStateProps {
   /** Callback to run the algorithm */
   onRun: () => void;
 }
 
 /**
- * Props for the BFSLegend component (optional)
+ * Props for the DFSLegend component (optional)
  */
-export interface BFSLegendProps {
+export interface DFSLegendProps {
   /** Custom legend items (optional) */
   items?: Array<{ color: string; label: string }>;
 }
