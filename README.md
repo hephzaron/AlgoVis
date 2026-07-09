@@ -42,6 +42,7 @@ Algo-Vis highlights the inner workings of algorithms instead of only showing fin
 
 ![Algorithm Illustration](https://placehold.co/1200x500?text=Algo-Vis+visualization+preview&font=roboto)
 
+
 > The app is built for people who learn best by seeing algorithms move and by matching code to visual state.
 
 ---
@@ -91,9 +92,14 @@ Algo-Vis is designed for learners who want to:
 
 ## Screenshots
 
-![Sorting Visualizer](https://placehold.co/900x320?text=Sorting+Visualizer+Screenshot&font=roboto)
+![Sorting Visualizer](public/assets/sort.JPG)
 
-![Searching Visualizer](https://placehold.co/900x320?text=Searching+Visualizer+Screenshot&font=roboto)
+![Searching Visualizer](public/assets/search.JPG)
+
+![Data Structure Visualizer](public/assets/datastruct.JPG)
+
+![Graph Algorithm Visualizer](public/assets/graphAlgo.JPG)
+
 
 > Replace the placeholder images with actual app screenshots once available.
 
